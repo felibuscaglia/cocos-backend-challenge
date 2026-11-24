@@ -143,7 +143,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T0.2 — Limpiar el scaffold de NestJS
 - [x] T0.3 — Configuración y variables de entorno
 - [x] T0.4 — Bootstrap HTTP: validación global y logger
-- [ ] T0.5 — Documentación OpenAPI (Swagger) base
+- [x] T0.5 — Documentación OpenAPI (Swagger) base
 
 **Fase 1 — Docker**
 - [ ] T1.1 — Dockerfile de la API
@@ -190,6 +190,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [ ] T9.2 — Colección de Postman (recordatorio)
 - [ ] T9.3 — Verificación contra Neon *(condicional)*
 - [ ] T9.4 — Revisión final de la entrega
+- [ ] T9.5 — Header `X-User-Id` en Swagger
 
 ---
 
@@ -252,10 +253,9 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** dejar Swagger listo para que cada endpoint se documente a medida que se crea.
 
 **Subtareas**
-- [ ] Instalar `@nestjs/swagger`.
-- [ ] Configurar el documento (título, descripción y versión, en español).
-- [ ] Servir la UI en `/api/docs`.
-- [ ] Declarar el header `X-User-Id` para poder reutilizarlo en los endpoints que lo necesitan.
+- [x] Instalar `@nestjs/swagger`.
+- [x] Configurar el documento (título, descripción y versión, en español).
+- [x] Servir la UI en `/api/docs`.
 
 **Criterios de aceptación**
 - [ ] `GET /api/docs` muestra la UI de Swagger.
@@ -887,3 +887,15 @@ En cada caso se verifican el código HTTP, el formato del error (`statusCode`, `
 **Criterios de aceptación**
 - [ ] Todo lo anterior pasa sin intervención manual fuera del README.
 - [ ] Ninguna credencial real aparece en el repo ni en su historial.
+
+### T9.5 — Header `X-User-Id` en Swagger
+
+**Objetivo:** retomar el ítem pospuesto de T0.5: declarar el header `X-User-Id` en Swagger una sola vez, para reutilizarlo en los endpoints que lo necesitan.
+
+**Subtareas**
+- [ ] Definir cómo se declara el header de forma reutilizable.
+- [ ] Aplicarlo a `GET /portfolio` y `POST /orders`.
+
+**Criterios de aceptación**
+- [ ] En la UI de Swagger, `GET /portfolio` y `POST /orders` piden el header `X-User-Id`, con descripción en español.
+- [ ] `GET /instruments` y `POST /orders/:orderId/cancel` no lo piden.
