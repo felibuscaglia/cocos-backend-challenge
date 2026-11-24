@@ -141,7 +141,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Fase 0 — Preparación**
 - [x] T0.1 — Consultar a Cocos sobre la base hosteada *(sin commit)*
 - [x] T0.2 — Limpiar el scaffold de NestJS
-- [ ] T0.3 — Configuración y variables de entorno
+- [x] T0.3 — Configuración y variables de entorno
 - [ ] T0.4 — Bootstrap HTTP: prefijo, validación global y logger
 - [ ] T0.5 — Documentación OpenAPI (Swagger) base
 
@@ -224,13 +224,12 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** centralizar la configuración y validar las variables de entorno al iniciar.
 
 **Subtareas**
-- [ ] Instalar `@nestjs/config` y `joi`.
-- [ ] Registrar `ConfigModule` como global, con un esquema Joi que valide:
-  - [ ] `DATABASE_URL`: obligatoria, URI de Postgres.
-  - [ ] `PORT`: opcional, numérica, por defecto `3000`.
-- [ ] Leer `PORT` desde la configuración en el bootstrap.
-- [ ] Crear `.env.example` con todas las variables y valores de ejemplo, sin credenciales reales.
-- [ ] Confirmar que `.env` sigue en `.gitignore`.
+- [x] Instalar `@nestjs/config` y `joi`.
+- [x] Registrar `ConfigModule` como global, con un esquema Joi que valide:
+  - [x] `DATABASE_URL`: obligatoria, URI de Postgres. Sin valor por defecto en el código: el valor por defecto lo dan `docker-compose.yml` y `.env.example`.
+  - [x] `PORT`: opcional, numérica, por defecto `3000`.
+- [x] Leer `PORT` desde la configuración en el bootstrap.
+- [x] Crear `.env.example` con todas las variables y valores de ejemplo, sin credenciales reales. `DATABASE_URL` apunta a la base de Docker Compose desde la máquina local (host `localhost`), para correr la app con npm.
 
 **Criterios de aceptación**
 - [ ] Sin `DATABASE_URL`, la app no inicia y el error indica qué variable falta.
@@ -305,7 +304,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
   - [ ] Construido con el Dockerfile de T1.1.
   - [ ] Espera a que `db` esté sana (`depends_on` con `condition: service_healthy`).
   - [ ] Publica el puerto de la API.
-  - [ ] `DATABASE_URL` apunta por defecto a `db` y se puede sobrescribir desde `.env` (ej. Neon).
+  - [ ] `DATABASE_URL` apunta por defecto a `db` (definido en `docker-compose.yml`, no en el código) y se puede sobrescribir desde `.env` (ej. Neon).
 
 **Criterios de aceptación**
 - [ ] Con el repo recién clonado, `docker compose up` deja la API respondiendo bajo `http://localhost:<PORT>/api/v1` sin configurar nada más.
