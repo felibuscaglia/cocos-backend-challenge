@@ -15,6 +15,7 @@ Challenge técnico de backend para Cocos Capital: una API REST en NestJS 11 + Ty
 
 ## Cómo trabajar con el usuario
 
+- **Respuestas lo más concisas y simples posible.** Ir directo al punto, sin repetir contexto ni agregar secciones o detalles que no se pidieron. Usar tablas o listas solo si hacen la respuesta más corta.
 - **El usuario toma todas las decisiones técnicas y desarrolla cada tarea.** No implementar tareas de `docs/TASKS.md`, ni ampliar el alcance de un pedido, sin que lo pida explícitamente.
 - **Ante cualquier duda, preguntar antes de decidir.** Esto aplica cuando algo no está definido en `docs/`, cuando es ambiguo o cuando dos documentos se contradicen. Al preguntar:
   - Presentar las opciones con pros y contras.

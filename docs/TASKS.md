@@ -146,7 +146,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T0.5 — Documentación OpenAPI (Swagger) base
 
 **Fase 1 — Docker**
-- [ ] T1.1 — Dockerfile de la API
+- [x] T1.1 — Dockerfile de la API
 - [ ] T1.2 — Docker Compose (base de datos + API)
 
 **Fase 2 — Acceso a datos con TypeORM**
@@ -258,9 +258,9 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] Servir la UI en `/api/docs`.
 
 **Criterios de aceptación**
-- [ ] `GET /api/docs` muestra la UI de Swagger.
-- [ ] El JSON de OpenAPI se puede descargar (por defecto en `/api/docs-json`).
-- [ ] Todos los textos del documento están en español.
+- [x] `GET /docs` muestra la UI de Swagger.
+- [x] El JSON de OpenAPI se puede descargar
+- [x] Todos los textos del documento están en español.
 
 ---
 
@@ -271,17 +271,17 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** empaquetar la API en una imagen que corra igual en cualquier máquina con Docker.
 
 **Subtareas**
-- [ ] Escribir un Dockerfile multi-stage:
-  - [ ] Etapa de build: `npm ci` + `npm run build`.
-  - [ ] Etapa final: solo dependencias de producción y `dist/`.
-- [ ] Usar una imagen base de Node con versión mayor fija, la misma que en desarrollo (ej. `node:24-alpine`).
-- [ ] Crear `.dockerignore` que excluya `node_modules`, `dist`, `.env`, `.git` y `coverage`.
-- [ ] Exponer el puerto de la app y arrancar con `node dist/main`.
+- [x] Escribir un Dockerfile multi-stage:
+  - [x] Etapa de build: `npm ci` + `npm run build`.
+  - [x] Etapa final: solo dependencias de producción y `dist/`.
+- [x] Usar una imagen base de Node con versión mayor fija, la misma que en desarrollo.
+- [x] Crear `.dockerignore` que excluya `node_modules`, `dist`, `.env`, `.git` y `coverage`.
+- [x] Exponer el puerto de la app y arrancar con `node dist/main`.
 
 **Criterios de aceptación**
-- [ ] `docker build .` termina sin errores.
-- [ ] La imagen final no contiene `.env`, código fuente TypeScript ni dependencias de desarrollo.
-- [ ] El contenedor arranca con las variables de entorno que recibe.
+- [x] `docker build .` termina sin errores.
+- [x] La imagen final no contiene `.env`, código fuente TypeScript ni dependencias de desarrollo.
+- [x] El contenedor arranca con las variables de entorno que recibe.
 
 ### T1.2 — Docker Compose (base de datos + API)
 
