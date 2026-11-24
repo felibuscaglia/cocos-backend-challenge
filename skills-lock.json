@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "skills": {
+    "docker-compose-patterns": {
+      "source": "docker/skills",
+      "commit": "5653ef866fc4475f66bb8097043ee4dd19956e76",
+      "sourceType": "github",
+      "skillPath": "skills/docker-compose-patterns/SKILL.md",
+      "computedHash": "fd752b44e789bbf42f8c0edd92df89c84871d46aee92785230e5260f866e8f99"
+    },
+    "nestjs-best-practices": {
+      "source": "Kadajett/agent-nestjs-skills",
+      "commit": "3986e0cede33958e000f959031cbee0cd83c2941",
+      "sourceType": "github",
+      "skillPath": "skills/nestjs-best-practices/SKILL.md",
+      "computedHash": "15dfabf74412bab8e6232cbe111b56048aac496d2f151a08995f305475d82fad"
+    },
+    "ponytail": {
+      "source": "DietrichGebert/ponytail",
+      "commit": "ebd8654c2c627f721eb8f9c0d1bd4090a29f9e10",
+      "sourceType": "github",
+      "skillPath": "skills/ponytail/SKILL.md",
+      "computedHash": "56d72677aca02689ac89bd48734e8c19b40ab86716d1257eaf5f1238b43cda6b"
+    },
+    "postgres-best-practices": {
+      "source": "neondatabase/postgres-skills",
+      "commit": "02cbe6d880f35ad2fbbbff3cec42fa12057e011c",
+      "sourceType": "github",
+      "skillPath": "skills/postgres-best-practices/SKILL.md",
+      "computedHash": "831a3fa1d77af721028e9decf8ecf2ea0f841430d584e1d8b372580e94e64662"
+    },
+    "typescript-e2e-testing": {
+      "source": "bmad-labs/skills",
+      "commit": "561b02ccf2111ef7aaa9889821990006c1e59ff1",
+      "sourceType": "github",
+      "skillPath": "skills/typescript-e2e-testing/SKILL.md",
+      "computedHash": "8f89ad8197dcbfa2cd7967f52bf5ce0eff353af4d8b5a4d0a8aea1a77b3f86a3"
+    }
+  }
+}
