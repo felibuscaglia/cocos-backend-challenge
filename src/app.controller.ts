@@ -1,12 +1,16 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor() {}
 
-  @Get('/health')
-  checkHealth(): HttpStatus {
-    return this.appService.health;
+  @Get()
+  getInfo() {
+    return {
+      statusCode: HttpStatus.OK,
+      name: 'Cocos Backend Challenge',
+      description: 'API REST de portfolio, búsqueda de activos y órdenes.',
+      author: 'Felipe Buscaglia',
+    };
   }
 }

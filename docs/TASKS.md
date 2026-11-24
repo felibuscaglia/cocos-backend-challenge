@@ -139,8 +139,8 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 ## Índice
 
 **Fase 0 — Preparación**
-- [ ] T0.1 — Consultar a Cocos sobre la base hosteada *(sin commit)*
-- [ ] T0.2 — Limpiar el scaffold de NestJS
+- [x] T0.1 — Consultar a Cocos sobre la base hosteada *(sin commit)*
+- [x] T0.2 — Limpiar el scaffold de NestJS
 - [ ] T0.3 — Configuración y variables de entorno
 - [ ] T0.4 — Bootstrap HTTP: prefijo, validación global y logger
 - [ ] T0.5 — Documentación OpenAPI (Swagger) base
@@ -200,26 +200,24 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** saber si se pueden aplicar migraciones sobre la base de Neon provista sin afectar a otros candidatos.
 
 **Subtareas**
-- [ ] Preguntar si la base es exclusiva y si se pueden aplicar migraciones: restricciones, índices, la extensión `unaccent` y una función SQL.
-- [ ] Guardar la respuesta para decidir T9.3.
+- [x] Preguntar si la base es exclusiva y si se pueden aplicar migraciones: restricciones, índices, la extensión `unaccent` y una función SQL.
+- [x] Guardar la respuesta para decidir T9.3.
 
 **Criterios de aceptación**
-- [ ] Hay una respuesta de Cocos que autoriza o descarta usar migraciones en Neon.
-- [ ] Hasta tener esa respuesta, la app nunca se inicia con `DATABASE_URL` apuntando a Neon, porque las migraciones se aplican solas al iniciar.
+- [x] Hay una respuesta de Cocos que autoriza o descarta usar migraciones en Neon.
+- [x] Hasta tener esa respuesta, la app nunca se inicia con `DATABASE_URL` apuntando a Neon, porque las migraciones se aplican solas al iniciar.
 
 ### T0.2 — Limpiar el scaffold de NestJS
 
 **Objetivo:** dejar el proyecto sin el código de ejemplo de NestJS.
 
 **Subtareas**
-- [ ] Eliminar `AppController` y `AppService` y quitarlos de `AppModule`.
-- [ ] Eliminar o reemplazar el test e2e de ejemplo (`test/app.e2e-spec.ts`), que espera "Hello World!".
-- [ ] Reemplazar el README por defecto de NestJS por un README mínimo en español (se completa en T9.1).
+- [x] Eliminar o reemplazar el test e2e de ejemplo (`test/app.e2e-spec.ts`), que espera "Hello World!".
+- [x] Reemplazar el README por defecto de NestJS por un README mínimo en español (se completa en T9.1).
 
 **Criterios de aceptación**
-- [ ] `npm run build` y `npm run lint` terminan sin errores.
-- [ ] No quedan referencias a "Hello World" en el repo.
-- [ ] La app inicia sin rutas de ejemplo.
+- [x] `npm run build` y `npm run lint` terminan sin errores.
+- [x] No quedan referencias a "Hello World" en el repo.
 
 ### T0.3 — Configuración y variables de entorno
 
