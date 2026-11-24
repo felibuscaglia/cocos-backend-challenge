@@ -88,7 +88,7 @@ No se guardan en la base: se devuelven en la respuesta como `rejection: { code, 
 - Las órdenes de efectivo se guardan con instrumento ARS y `type` `MARKET`.
 - `datetime` siempre lo asigna Postgres (`now()`), nunca el cliente ni Node.
 
-### Orden de validación de `POST /api/v1/orders`
+### Orden de validación de `POST /orders`
 
 1. Header `X-User-Id` ausente, no numérico o de un usuario inexistente → **404**.
 2. Formato del body (campos, tipos, valores permitidos, combinaciones) → **400**.
@@ -142,7 +142,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T0.1 — Consultar a Cocos sobre la base hosteada *(sin commit)*
 - [x] T0.2 — Limpiar el scaffold de NestJS
 - [x] T0.3 — Configuración y variables de entorno
-- [ ] T0.4 — Bootstrap HTTP: prefijo, validación global y logger
+- [x] T0.4 — Bootstrap HTTP: validación global y logger
 - [ ] T0.5 — Documentación OpenAPI (Swagger) base
 
 **Fase 1 — Docker**
@@ -165,13 +165,13 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Fase 5 — Saldos y portfolio**
 - [ ] T5.1 — Cálculo de saldos del usuario
-- [ ] T5.2 — Endpoint `GET /api/v1/portfolio`
+- [ ] T5.2 — Endpoint `GET /portfolio`
 
 **Fase 6 — Búsqueda de activos**
-- [ ] T6.1 — Endpoint `GET /api/v1/instruments`
+- [ ] T6.1 — Endpoint `GET /instruments`
 
 **Fase 7 — Órdenes**
-- [ ] T7.1 — `POST /api/v1/orders`: órdenes MARKET por cantidad
+- [ ] T7.1 — `POST /orders`: órdenes MARKET por cantidad
 - [ ] T7.2 — Órdenes LIMIT
 - [ ] T7.3 — Órdenes por monto en pesos
 - [ ] T7.4 — Transferencias CASH_IN / CASH_OUT
@@ -232,26 +232,20 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] Crear `.env.example` con todas las variables y valores de ejemplo, sin credenciales reales. `DATABASE_URL` apunta a la base de Docker Compose desde la máquina local (host `localhost`), para correr la app con npm.
 
 **Criterios de aceptación**
-- [ ] Sin `DATABASE_URL`, la app no inicia y el error indica qué variable falta.
-- [ ] Con un `PORT` inválido (ej. `abc`), la app no inicia.
-- [ ] `.env.example` está commiteado y `.env` no.
-- [ ] Ningún archivo commiteado contiene la URL ni la contraseña de Neon.
+- [x] Sin `DATABASE_URL`, la app no inicia y el error indica qué variable falta.
+- [x] Con un `PORT` inválido (ej. `abc`), la app no inicia.
+- [x] `.env.example` está commiteado y `.env` no.
 
-### T0.4 — Bootstrap HTTP: prefijo, validación global y logger
+### T0.4 — Bootstrap HTTP: validación global y logger
 
 **Objetivo:** configurar el comportamiento HTTP común a todos los endpoints.
 
 **Subtareas**
-- [ ] Instalar `class-validator` y `class-transformer`.
-- [ ] Configurar el prefijo global `/api/v1`.
-- [ ] Registrar un `ValidationPipe` global con `whitelist`, `forbidNonWhitelisted` y `transform`.
-- [ ] Hacer que todos los mensajes de validación estén en español, incluidos los de campos no permitidos (ej. con `exceptionFactory`).
-- [ ] Usar el `Logger` integrado de Nest para loguear el arranque (puerto).
+- [x] Instalar `class-validator` y `class-transformer`.
+- [x] Registrar un `ValidationPipe` global con `whitelist`, `forbidNonWhitelisted` y `transform`.
 
 **Criterios de aceptación**
-- [ ] Todas las rutas quedan bajo `/api/v1`. Fuera del prefijo, la API responde 404.
-- [ ] Un campo no declarado en un DTO, en el body o en la query, responde 400 con mensaje en español.
-- [ ] Al iniciar, el log muestra el puerto en el que escucha la app.
+- [x] Al iniciar, el log muestra el puerto en el que escucha la app.
 
 ### T0.5 — Documentación OpenAPI (Swagger) base
 
@@ -307,7 +301,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
   - [ ] `DATABASE_URL` apunta por defecto a `db` (definido en `docker-compose.yml`, no en el código) y se puede sobrescribir desde `.env` (ej. Neon).
 
 **Criterios de aceptación**
-- [ ] Con el repo recién clonado, `docker compose up` deja la API respondiendo bajo `http://localhost:<PORT>/api/v1` sin configurar nada más.
+- [ ] Con el repo recién clonado, `docker compose up` deja la API respondiendo en `http://localhost:<PORT>` sin configurar nada más.
 - [ ] En el primer arranque, la base tiene exactamente los datos de `database.sql`: 4 usuarios, 66 instrumentos, 126 filas de `marketdata` y 11 órdenes.
 - [ ] `docker compose down -v` seguido de `docker compose up` deja la base otra vez en el estado del seed.
 - [ ] `docker-compose.yml` no contiene nada de Neon.
@@ -453,7 +447,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
     "statusCode": 404,
     "message": "Usuario no encontrado",
     "error": "Not Found",
-    "path": "/api/v1/portfolio",
+    "path": "/portfolio",
     "timestamp": "2026-11-23T14:00:00.000Z"
   }
   ```
@@ -471,7 +465,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [ ] Documentar el header en Swagger en los endpoints que lo usan.
 
 **Criterios de aceptación**
-- [ ] Se aplica a `GET /api/v1/portfolio` y `POST /api/v1/orders`. No se aplica a `GET /api/v1/instruments` ni a la cancelación.
+- [ ] Se aplica a `GET /portfolio` y `POST /orders`. No se aplica a `GET /instruments` ni a la cancelación.
 - [ ] Sin header, o con `X-User-Id` igual a `999`, `abc`, `0`, `-1` o `1.5` → 404 con el formato de T4.1.
 - [ ] Con `X-User-Id: 1`, el handler recibe el usuario 1.
 - [ ] El header se valida antes que el body.
@@ -496,7 +490,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [ ] Usuario 1: `40` acciones disponibles de PAMP y `-10` de BMA.
 - [ ] Las órdenes `REJECTED` y `CANCELLED` no afectan ningún saldo.
 
-### T5.2 — Endpoint `GET /api/v1/portfolio`
+### T5.2 — Endpoint `GET /portfolio`
 
 **Objetivo:** devolver el valor total de la cuenta, el efectivo y las posiciones del usuario.
 
@@ -536,7 +530,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 ## Fase 6 — Búsqueda de activos
 
-### T6.1 — Endpoint `GET /api/v1/instruments`
+### T6.1 — Endpoint `GET /instruments`
 
 **Objetivo:** buscar activos por ticker o nombre, con ranking, paginación, último precio y retorno diario.
 
@@ -578,12 +572,12 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 ## Fase 7 — Órdenes
 
-### T7.1 — `POST /api/v1/orders`: órdenes MARKET por cantidad
+### T7.1 — `POST /orders`: órdenes MARKET por cantidad
 
 **Objetivo:** crear el endpoint de envío de órdenes con la ejecución inmediata de BUY y SELL MARKET.
 
 **Subtareas**
-- [ ] Crear `POST /api/v1/orders`, que identifica al usuario con `X-User-Id` (T4.2).
+- [ ] Crear `POST /orders`, que identifica al usuario con `X-User-Id` (T4.2).
 - [ ] Definir el DTO con `ticker` (texto), `side` (BUY, SELL, CASH_IN, CASH_OUT), `type` (MARKET, LIMIT), `size` (entero > 0) y `price` (en MARKET se ignora, sin validarlo). Todos los mensajes en español.
 - [ ] Hasta completar T7.2–T7.4, LIMIT, `amount` y CASH_IN/CASH_OUT pueden responder 400.
 - [ ] Buscar el instrumento por `ticker` exacto (distingue mayúsculas). Si no existe → 404 "Instrumento no encontrado".
@@ -653,7 +647,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 ### T7.4 — Transferencias CASH_IN / CASH_OUT
 
-**Objetivo:** registrar depósitos y extracciones de pesos a través de `POST /api/v1/orders`.
+**Objetivo:** registrar depósitos y extracciones de pesos a través de `POST /orders`.
 
 **Subtareas**
 - [ ] Exigir `ticker: "ARS"`. Con otro ticker → 400.
@@ -691,7 +685,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** permitir cancelar órdenes en espera.
 
 **Subtareas**
-- [ ] Crear `POST /api/v1/orders/:orderId/cancel`, sin header de usuario y sin verificar a quién pertenece la orden.
+- [ ] Crear `POST /orders/:orderId/cancel`, sin header de usuario y sin verificar a quién pertenece la orden.
 - [ ] `orderId` no numérico o inexistente → 404 "Orden no encontrada".
 - [ ] Orden con un estado distinto de `NEW` → 409, con un mensaje en español que indique el estado actual.
 - [ ] Actualizar de forma atómica (`UPDATE ... WHERE id = ... AND status = 'NEW'`), para que dos cancelaciones simultáneas no se pisen.
@@ -708,7 +702,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 ## Fase 8 — Tests funcionales del envío de órdenes
 
-Todos los tests son HTTP (supertest) contra `POST /api/v1/orders`, sobre una base real en un contenedor.
+Todos los tests son HTTP (supertest) contra `POST /orders`, sobre una base real en un contenedor.
 - **201:** se verifican la respuesta y la fila guardada en `orders`.
 - **4xx:** se verifican el formato del error y que la cantidad de órdenes no cambió.
 

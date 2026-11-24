@@ -1,14 +1,12 @@
 # Decisiones — API
 
-## Prefijo `/api/v1` y rutas
+## Rutas
 
-**Decisión:** todas las rutas cuelgan de `/api/v1`:
+**Decisión:** las rutas cuelgan de la raíz, sin prefijo global ni versión:
 - `GET /portfolio`
 - `GET /instruments`
 - `POST /orders`
 - `POST /orders/:orderId/cancel`
-
-**Por qué:** tener la versión en la ruta permite introducir cambios incompatibles en el futuro sin romper a los clientes existentes.
 
 ## Usuario por header `X-User-Id`
 

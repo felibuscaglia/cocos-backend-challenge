@@ -2,7 +2,7 @@
 
 ## Alcance: test funcional del envío de órdenes
 
-**Decisión:** tests HTTP con supertest contra `POST /api/v1/orders`, que cubren todos los casos: órdenes aceptadas, órdenes rechazadas, errores 400 y 404, y concurrencia.
+**Decisión:** tests HTTP con supertest contra `POST /orders`, que cubren todos los casos: órdenes aceptadas, órdenes rechazadas, errores 400 y 404, y concurrencia.
 
 **Por qué:** la consigna pide un test funcional sobre el envío de órdenes. Probar por HTTP cubre de punta a punta la validación, los códigos de estado, el formato de errores, el SQL y las transacciones.
 

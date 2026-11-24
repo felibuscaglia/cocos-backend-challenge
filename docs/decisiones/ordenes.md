@@ -83,7 +83,7 @@
 
 ## Transferencias a través de `POST /orders`
 
-**Decisión:** CASH_IN y CASH_OUT se envían a `POST /api/v1/orders` con `ticker: "ARS"`, `type: "MARKET"` y el monto en `amount` (`size` y `price` se ignoran). Se guardan con `size = amount` y `price = 1`. CASH_IN queda FILLED. CASH_OUT se valida contra `availableCash`; si no alcanza, queda REJECTED con `INSUFFICIENT_FUNDS`.
+**Decisión:** CASH_IN y CASH_OUT se envían a `POST /orders` con `ticker: "ARS"`, `type: "MARKET"` y el monto en `amount` (`size` y `price` se ignoran). Se guardan con `size = amount` y `price = 1`. CASH_IN queda FILLED. CASH_OUT se valida contra `availableCash`; si no alcanza, queda REJECTED con `INSUFFICIENT_FUNDS`.
 
 **Por qué se consideró un endpoint aparte:** depositar o retirar pesos es una operación distinta de comprar o vender: no tiene precio de mercado, tipo MARKET/LIMIT ni cantidad de acciones. Un endpoint propio (por ejemplo, `POST /transfers` con `{ side, amount }`) tendría un contrato más simple y explícito.
 
@@ -103,7 +103,7 @@
 
 ## Cancelación
 
-**Decisión:** las órdenes se cancelan con `POST /api/v1/orders/:orderId/cancel`.
+**Decisión:** las órdenes se cancelan con `POST /orders/:orderId/cancel`.
 - Solo se cancelan órdenes NEW. Cualquier otro estado responde 409, y una orden inexistente, 404.
 - No se verifica a quién pertenece la orden.
 - La actualización es atómica (`UPDATE ... WHERE status = 'NEW'`), así que dos cancelaciones simultáneas no se pisan.
