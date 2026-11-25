@@ -6,49 +6,90 @@ import {
   IsString,
   Matches,
   Min,
+  ValidateBy,
   ValidateIf,
 } from 'class-validator';
 import { ExactlyOneOf } from '../../common/decorators';
 import { OrderSide, OrderType } from '../enums';
-
-const isTrade = (dto: CreateOrderDto) =>
-  dto.side === OrderSide.BUY || dto.side === OrderSide.SELL;
+import { isTrade } from '../lib/helpers';
 
 export class CreateOrderDto {
   @ApiProperty({ description: 'Ticker del instrumento.', example: 'PAMP' })
   @IsString({ message: 'ticker debe ser un texto' })
+  @ValidateBy(
+    {
+      name: 'isArsForTransfers',
+      validator: {
+        validate: (value: unknown, args) =>
+          isTrade((args?.object as CreateOrderDto).side) || value === 'ARS',
+      },
+    },
+    {
+      message:
+        'Las órdenes CASH_IN y CASH_OUT solo se pueden enviar con ticker ARS',
+    },
+  )
   ticker: string;
 
   @ApiProperty({ description: 'Lado de la orden.', enum: OrderSide })
   @IsEnum(OrderSide, {
     message: `side debe ser uno de: ${Object.values(OrderSide).join(', ')}`,
   })
-  // Va en side porque size y amount se saltean con ValidateIf según el caso.
-  @ExactlyOneOf(['size', 'amount'], {
-    message: 'Se debe enviar size o amount, pero no ambos',
-  })
+  // Van en side porque size y amount se saltean con ValidateIf según el caso.
+  @ExactlyOneOf(
+    ['size', 'amount'],
+    { message: 'Se debe enviar size o amount, pero no ambos' },
+    (dto: CreateOrderDto) => isTrade(dto.side),
+  )
+  @ValidateBy(
+    {
+      name: 'hasAmountForTransfers',
+      validator: {
+        validate: (value: unknown, args) =>
+          isTrade(value as OrderSide) ||
+          (args?.object as CreateOrderDto).amount !== undefined,
+      },
+    },
+    { message: 'Las órdenes CASH_IN y CASH_OUT requieren amount' },
+  )
   side: OrderSide;
 
   @ApiProperty({ description: 'Tipo de orden.', enum: OrderType })
   @IsEnum(OrderType, {
     message: `type debe ser uno de: ${Object.values(OrderType).join(', ')}`,
   })
+  @ValidateBy(
+    {
+      name: 'isMarketForTransfers',
+      validator: {
+        validate: (value: unknown, args) =>
+          isTrade((args?.object as CreateOrderDto).side) ||
+          value === OrderType.MARKET,
+      },
+    },
+    {
+      message:
+        'Las órdenes CASH_IN y CASH_OUT solo se pueden enviar con type MARKET',
+    },
+  )
   type: OrderType;
 
   @ApiPropertyOptional({
     description:
-      'Cantidad de acciones. En BUY/SELL se envía size o amount, no ambos.',
+      'Cantidad de acciones. En BUY/SELL se envía size o amount, no ambos; en CASH_IN/CASH_OUT se ignora.',
     minimum: 1,
     example: 10,
   })
-  @ValidateIf((dto: CreateOrderDto) => !isTrade(dto) || dto.size !== undefined)
+  @ValidateIf(
+    (dto: CreateOrderDto) => isTrade(dto.side) && dto.size !== undefined,
+  )
   @IsInt({ message: 'size debe ser un entero' })
   @Min(1, { message: 'size debe ser mayor a 0' })
   size?: number;
 
   @ApiPropertyOptional({
     description:
-      'Monto en pesos, como texto decimal. Se compran o venden floor(amount ÷ precio) acciones. En BUY/SELL se envía size o amount, no ambos.',
+      'Monto en pesos, como texto decimal. Se compran o venden floor(amount ÷ precio) acciones. En BUY/SELL se envía size o amount, no ambos. Obligatorio en CASH_IN/CASH_OUT, solo en pesos enteros.',
     example: '50000',
   })
   @ValidateIf((dto: CreateOrderDto) => dto.amount !== undefined)
@@ -57,6 +98,18 @@ export class CreateOrderDto {
     message:
       'amount debe ser un número decimal mayor a 0, con hasta 2 decimales',
   })
+  // Las transferencias se guardan como `size` pesos a precio 1, y `size` es entero.
+  @ValidateBy(
+    {
+      name: 'isIntegerForTransfers',
+      validator: {
+        validate: (value: unknown, args) =>
+          isTrade((args?.object as CreateOrderDto).side) ||
+          /^\d+$/.test(value as string),
+      },
+    },
+    { message: 'Las órdenes CASH_IN y CASH_OUT solo aceptan montos enteros' },
+  )
   amount?: string;
 
   @ApiPropertyOptional({

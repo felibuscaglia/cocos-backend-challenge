@@ -46,10 +46,11 @@ export class OrdersService {
       : type === OrderType.MARKET
         ? (latestClose ?? '0')
         : price!;
-    // El DTO exige size o amount en BUY/SELL.
+    // El DTO exige size o amount en BUY/SELL, y amount entero en las transferencias.
     // Sin precio (MARKET sin datos de mercado) la cantidad no se puede calcular y queda en 0.
-    const orderSize =
-      isTrade && amount !== undefined
+    const orderSize = !isTrade
+      ? Number(amount!)
+      : amount !== undefined
         ? new Decimal(orderPrice).isZero()
           ? 0
           : new Decimal(amount).div(orderPrice).floor().toNumber()

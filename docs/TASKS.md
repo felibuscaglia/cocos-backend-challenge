@@ -172,7 +172,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T7.1 — `POST /orders`: órdenes MARKET por cantidad
 - [x] T7.2 — Órdenes LIMIT
 - [x] T7.3 — Órdenes por monto en pesos
-- [ ] T7.4 — Transferencias CASH_IN / CASH_OUT
+- [x] T7.4 — Transferencias CASH_IN / CASH_OUT
 - [ ] T7.5 — Control de concurrencia
 - [ ] T7.6 — Cancelación de órdenes
 
@@ -638,20 +638,20 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** registrar depósitos y extracciones de pesos a través de `POST /orders`.
 
 **Subtareas**
-- [ ] Exigir `ticker: "ARS"`. Con otro ticker → 400.
-- [ ] Exigir `type: "MARKET"`. Con LIMIT → 400.
-- [ ] Exigir `amount`, entero > 0. Si falta o tiene decimales → 400.
-- [ ] Ignorar `size` y `price` si vienen en el body.
-- [ ] Guardar con instrumento ARS, `size = amount`, `price` `1` y `type` `MARKET`.
-- [ ] CASH_IN → `FILLED`.
-- [ ] CASH_OUT con `amount` > `availableCash` → `REJECTED` con `INSUFFICIENT_FUNDS`. Si no, `FILLED`.
+- [x] Exigir `ticker: "ARS"`. Con otro ticker → 400.
+- [x] Exigir `type: "MARKET"`. Con LIMIT → 400.
+- [x] Exigir `amount`, entero > 0. Si falta o tiene decimales → 400.
+- [x] Ignorar `size` y `price` si vienen en el body.
+- [x] Guardar con instrumento ARS, `size = amount`, `price` `1` y `type` `MARKET`.
+- [x] CASH_IN → `FILLED`.
+- [x] CASH_OUT con `amount` > `availableCash` → `REJECTED` con `INSUFFICIENT_FUNDS`. Si no, `FILLED`.
 
 **Criterios de aceptación**
-- [ ] Usuario 2, CASH_IN de 10000 → `FILLED` con `size` 10000 y `price` 1. Después puede comprar por hasta 10000.
-- [ ] Usuario 1, CASH_OUT de 627500 → `FILLED`. Después su `availableCash` es 0.
-- [ ] Usuario 1, CASH_OUT de 700000 (menos que los 753000 totales, más que los 627500 disponibles) → `REJECTED` con `INSUFFICIENT_FUNDS`.
-- [ ] CASH_IN con `ticker: "PAMP"`, con `type: "LIMIT"`, sin `amount` o con `amount` 100.5 → 400.
-- [ ] CASH_IN que trae `size` además de `amount` → se ignora `size`.
+- [x] Usuario 2, CASH_IN de 10000 → `FILLED` con `size` 10000 y `price` 1. Después puede comprar por hasta 10000.
+- [x] Usuario 1, CASH_OUT de 627500 → `FILLED`. Después su `availableCash` es 0.
+- [x] Usuario 1, CASH_OUT de 700000 (menos que los 753000 totales, más que los 627500 disponibles) → `REJECTED` con `INSUFFICIENT_FUNDS`.
+- [x] CASH_IN con `ticker: "PAMP"`, con `type: "LIMIT"`, sin `amount` o con `amount` 100.5 → 400.
+- [x] CASH_IN que trae `size` además de `amount` → se ignora `size`.
 
 ### T7.5 — Control de concurrencia
 
