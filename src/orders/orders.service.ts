@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -13,6 +14,7 @@ import { CreatedOrderDto, CreateOrderDto } from './dto';
 import { OrderSide, OrderStatus, OrderType } from './enums';
 import { CashSummary, Position } from './interfaces';
 import { REJECTION_MESSAGES } from './lib/constants';
+import { Order } from './order.entity';
 import { OrdersRepository } from './orders.repository';
 import { isTrade } from './lib/helpers';
 
@@ -128,6 +130,22 @@ export class OrdersService {
       datetime,
       rejection,
     };
+  }
+
+  async cancelOrder(orderId: number): Promise<Order> {
+    const order = await this.ordersRepository.findById(orderId);
+
+    if (!order) {
+      throw new NotFoundException('Orden no encontrada');
+    }
+
+    if (!(await this.ordersRepository.cancelById(orderId))) {
+      throw new ConflictException(
+        `Solo se pueden cancelar órdenes NEW. La orden tiene estado ${order.status}`,
+      );
+    }
+
+    return { ...order, status: OrderStatus.CANCELLED };
   }
 
   async calculateCashBalances(userId: number): Promise<CashSummary> {

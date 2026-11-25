@@ -11,6 +11,19 @@ export class OrdersRepository {
     @InjectRepository(Order) private readonly repository: Repository<Order>,
   ) {}
 
+  findById(id: number): Promise<Order | null> {
+    return this.repository.findOneBy({ id });
+  }
+
+  // Devuelve false si la orden ya no estaba NEW: el chequeo y el cambio van en un solo UPDATE por un tema de concurrencia.
+  async cancelById(id: number): Promise<boolean> {
+    const { affected } = await this.repository.update(
+      { id, status: OrderStatus.NEW },
+      { status: OrderStatus.CANCELLED },
+    );
+    return affected === 1;
+  }
+
   save(order: Partial<Order>): Promise<Order> {
     return this.repository.save(order);
   }

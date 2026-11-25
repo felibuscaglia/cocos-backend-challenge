@@ -174,7 +174,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T7.3 — Órdenes por monto en pesos
 - [x] T7.4 — Transferencias CASH_IN / CASH_OUT
 - [x] T7.5 — Control de concurrencia
-- [ ] T7.6 — Cancelación de órdenes
+- [x] T7.6 — Cancelación de órdenes
 
 **Fase 8 — Tests funcionales del envío de órdenes**
 - [ ] T8.1 — Infraestructura de tests con Testcontainers
@@ -673,18 +673,18 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** permitir cancelar órdenes en espera.
 
 **Subtareas**
-- [ ] Crear `POST /orders/:orderId/cancel`, sin header de usuario y sin verificar a quién pertenece la orden.
-- [ ] `orderId` no numérico o inexistente → 404 "Orden no encontrada".
-- [ ] Orden con un estado distinto de `NEW` → 409, con un mensaje en español que indique el estado actual.
-- [ ] Actualizar de forma atómica (`UPDATE ... WHERE id = ... AND status = 'NEW'`), para que dos cancelaciones simultáneas no se pisen.
-- [ ] Responder 200 con el formato de orden de referencia, `status: "CANCELLED"` y `rejection: null`.
-- [ ] Documentar en Swagger.
+- [x] Crear `POST /orders/:orderId/cancel`, sin header de usuario y sin verificar a quién pertenece la orden.
+- [x] `orderId` no numérico o inexistente → 404 "Orden no encontrada".
+- [x] Orden con un estado distinto de `NEW` → 409, con un mensaje en español que indique el estado actual.
+- [x] Actualizar de forma atómica (`UPDATE ... WHERE id = ... AND status = 'NEW'`), para que dos cancelaciones simultáneas no se pisen.
+- [x] Responder 200 con el formato de orden de referencia, `status: "CANCELLED"` y `rejection: null`.
+- [x] Documentar en Swagger.
 
 **Criterios de aceptación**
-- [ ] Cancelar la orden 5 del seed (LIMIT BUY 50 LOMA, `NEW`) → 200 `CANCELLED`. El `reservedCash` del usuario 1 baja `35500` y su `availableCash` sube `35500`.
-- [ ] Cancelar la orden 2 (`FILLED`), la 3 (`CANCELLED`) o la 6 (`REJECTED`) → 409.
-- [ ] `orderId` 999 o `abc` → 404.
-- [ ] Dos cancelaciones simultáneas de la misma orden → una 200 y otra 409.
+- [x] Cancelar la orden 5 del seed (LIMIT BUY 50 LOMA, `NEW`) → 200 `CANCELLED`. El `reservedCash` del usuario 1 baja `35500` y su `availableCash` sube `35500`.
+- [x] Cancelar la orden 2 (`FILLED`), la 3 (`CANCELLED`) o la 6 (`REJECTED`) → 409.
+- [x] `orderId` 999 o `abc` → 404.
+- [x] Dos cancelaciones simultáneas de la misma orden → una 200 y otra 409.
 
 ---
 
