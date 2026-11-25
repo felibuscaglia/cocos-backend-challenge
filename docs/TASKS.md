@@ -151,7 +151,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Fase 2 — Acceso a datos con TypeORM**
 - [x] T2.1 — Conexión y configuración de migraciones
-- [ ] T2.2 — Entidades
+- [x] T2.2 — Entidades
 
 **Fase 3 — Migraciones de esquema**
 - [ ] T3.1 — Restricciones NOT NULL y CHECK
@@ -334,20 +334,19 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** mapear las tablas existentes sin cambiar el esquema.
 
 **Subtareas**
-- [ ] Crear entidades `User`, `Instrument`, `Order` y `MarketData` sobre las tablas `users`, `instruments`, `orders` y `marketdata`.
-- [ ] Usar propiedades en camelCase mapeadas a los nombres reales en minúsculas (ej. `instrumentId` → `instrumentid`, `previousClose` → `previousclose`, `accountNumber` → `accountnumber`).
-- [ ] Mantener `marketdata.date` como columna `date`.
-- [ ] Definir en código los valores permitidos de:
-  - [ ] `side`: BUY, SELL, CASH_IN, CASH_OUT.
-  - [ ] `type` de orden: MARKET, LIMIT.
-  - [ ] `status`: NEW, FILLED, REJECTED, CANCELLED.
-  - [ ] `type` de instrumento: ACCIONES, MONEDA.
-- [ ] Declarar las relaciones `Order` → `User`, `Order` → `Instrument` y `MarketData` → `Instrument`.
+- [x] Crear entidades `User`, `Instrument`, `Order` y `MarketData` sobre las tablas `users`, `instruments`, `orders` y `marketdata`.
+- [x] Usar propiedades en camelCase mapeadas a los nombres reales en minúsculas (ej. `instrumentId` → `instrumentid`, `previousClose` → `previousclose`, `accountNumber` → `accountnumber`).
+- [x] Definir en código los valores permitidos de:
+  - [x] `side`: BUY, SELL, CASH_IN, CASH_OUT.
+  - [x] `type` de orden: MARKET, LIMIT.
+  - [x] `status`: NEW, FILLED, REJECTED, CANCELLED.
+  - [x] `type` de instrumento: ACCIONES, MONEDA.
+- [x] Declarar las relaciones `Order` → `User`, `Order` → `Instrument` y `MarketData` → `Instrument`.
 
 **Criterios de aceptación**
-- [ ] Leer filas de las cuatro tablas devuelve todas las columnas mapeadas, sin `undefined` por nombres mal escritos.
-- [ ] Las columnas `NUMERIC` se leen sin pérdida de precisión. La conversión a `number` se hace recién al armar la respuesta.
-- [ ] Las entidades no provocan ningún cambio de esquema.
+- [x] Leer filas de las cuatro tablas devuelve todas las columnas mapeadas, sin `undefined` por nombres mal escritos.
+- [x] Las columnas `NUMERIC` se leen sin pérdida de precisión. La conversión a `number` se hace recién al armar la respuesta.
+- [x] Las entidades no provocan ningún cambio de esquema.
 
 ---
 
