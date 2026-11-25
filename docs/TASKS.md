@@ -150,7 +150,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T1.2 — Docker Compose (base de datos + API)
 
 **Fase 2 — Acceso a datos con TypeORM**
-- [ ] T2.1 — Conexión y configuración de migraciones
+- [x] T2.1 — Conexión y configuración de migraciones
 - [ ] T2.2 — Entidades
 
 **Fase 3 — Migraciones de esquema**
@@ -206,7 +206,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Criterios de aceptación**
 - [x] Hay una respuesta de Cocos que autoriza o descarta usar migraciones en Neon.
-- [x] Hasta tener esa respuesta, la app nunca se inicia con `DATABASE_URL` apuntando a Neon, porque las migraciones se aplican solas al iniciar.
+- [x] Hasta tener esa respuesta, la app nunca se inicia con `DATABASE_URL` apuntando a Neon, porque podría iniciarse con `RUN_MIGRATIONS=true` y aplicar las migraciones sobre esa base.
 
 ### T0.2 — Limpiar el scaffold de NestJS
 
@@ -311,21 +311,23 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 ### T2.1 — Conexión y configuración de migraciones
 
-**Objetivo:** conectar la app a Postgres con TypeORM y aplicar migraciones automáticamente al iniciar.
+**Objetivo:** conectar la app a Postgres con TypeORM y aplicar migraciones al iniciar cuando `RUN_MIGRATIONS=true`.
 
 **Subtareas**
-- [ ] Instalar `@nestjs/typeorm`, `typeorm` y `pg`.
-- [ ] Configurar `TypeOrmModule.forRootAsync` leyendo `DATABASE_URL` desde `ConfigService`.
-- [ ] `synchronize: false` en todos los entornos (el esquema sale de `database.sql` + migraciones).
-- [ ] `migrationsRun: true`, para aplicar las migraciones pendientes al iniciar.
-- [ ] Crear un `DataSource` para la CLI de TypeORM con la misma configuración.
-- [ ] Agregar scripts npm `migration:create`, `migration:run` y `migration:revert`.
+- [x] Instalar `@nestjs/typeorm`, `typeorm` y `pg`.
+- [x] Configurar `TypeOrmModule.forRootAsync` leyendo `DATABASE_URL` desde `ConfigService`.
+- [x] `synchronize: false` en todos los entornos (el esquema sale de `database.sql` + migraciones).
+- [x] `migrationsRun` según la variable obligatoria `RUN_MIGRATIONS`, leída desde `ConfigService`.
+- [x] Crear un `DataSource` para la CLI de TypeORM con la misma configuración.
+- [x] Agregar scripts npm `migration:create`, `migration:run` y `migration:revert`.
 
 **Criterios de aceptación**
-- [ ] La app se conecta a la base de Docker Compose.
-- [ ] La configuración funciona tanto sin SSL como con una URL con `sslmode=require` (lo de Neon se verifica en T9.3).
-- [ ] Al iniciar, TypeORM crea su tabla `migrations` y aplica las pendientes. Al reiniciar no las vuelve a aplicar.
-- [ ] Si la base no está disponible, la app falla con un error claro en el log.
+- [x] La app se conecta a la base de Docker Compose.
+- [x] La configuración funciona tanto sin SSL como con una URL con `sslmode=require` (lo de Neon se verifica en T9.3).
+- [x] Con `RUN_MIGRATIONS=true`, al iniciar TypeORM crea su tabla `migrations` y aplica las pendientes. Al reiniciar no las vuelve a aplicar.
+- [x] Con `RUN_MIGRATIONS=false`, la app inicia sin aplicar migraciones.
+- [x] Sin `RUN_MIGRATIONS`, la app no inicia y el error lo indica.
+- [x] Si la base no está disponible, la app falla con un error claro en el log.
 
 ### T2.2 — Entidades
 
@@ -712,7 +714,7 @@ Todos los tests son HTTP (supertest) contra `POST /orders`, sobre una base real 
 **Subtareas**
 - [ ] Instalar `@testcontainers/postgresql`.
 - [ ] Levantar un contenedor `postgres:18` por corrida y cargar `database.sql`.
-- [ ] Crear la app Nest de test apuntando a ese contenedor. Las migraciones se aplican solas al iniciar.
+- [ ] Crear la app Nest de test apuntando a ese contenedor, con `RUN_MIGRATIONS=true` para que aplique las migraciones al iniciar.
 - [ ] Antes de cada test, restaurar el seed: vaciar las tablas reiniciando los ids y volver a insertar los datos de `database.sql`.
 - [ ] Ajustar `test/jest-e2e.json` (timeouts, setup y teardown) y el script `test:e2e`.
 - [ ] Crear helpers para enviar órdenes y leer filas de `orders`.
@@ -827,7 +829,7 @@ En cada caso se verifican el código HTTP, el formato del error (`statusCode`, `
   - [ ] Qué es Docker Compose, en dos líneas.
   - [ ] `docker compose up`, y cómo volver al seed con `docker compose down -v`.
   - [ ] Ejecución local con npm contra la base de Docker, con `.env` creado desde `.env.example`.
-  - [ ] Cómo apuntar a otra base (ej. Neon), con la advertencia de que las migraciones se aplican solas al iniciar.
+  - [ ] Cómo apuntar a otra base (ej. Neon), y el uso de `RUN_MIGRATIONS` para decidir si se aplican las migraciones sobre ella.
   - [ ] Comandos de migraciones.
   - [ ] Cómo correr los tests (requiere Docker).
   - [ ] URL de Swagger (`/api/docs`).
@@ -862,7 +864,7 @@ En cada caso se verifican el código HTTP, el formato del error (`statusCode`, `
 
 **Subtareas**
 - [ ] Poner la URL de Neon en `.env`, sin commitearla.
-- [ ] Iniciar la app y confirmar que las migraciones se aplican sin errores.
+- [ ] Iniciar la app con `RUN_MIGRATIONS=true` y confirmar que las migraciones se aplican sin errores.
 - [ ] Probar portfolio, búsqueda, envío y cancelación de órdenes, teniendo en cuenta que las órdenes de prueba quedan guardadas en Neon.
 - [ ] Confirmar que el bloqueo de concurrencia funciona detrás del pooler de Neon.
 - [ ] Volver `.env` a la base local.

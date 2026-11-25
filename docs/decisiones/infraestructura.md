@@ -18,10 +18,16 @@
 
 **Por qué:** el mismo código funciona en desarrollo local, en Docker y contra cualquier base externa, sin cambios. Las opciones de conexión, como SSL, viajan en la propia URL (`sslmode=require`).
 
-## Migraciones automáticas al iniciar
+## Migraciones al iniciar, controladas por `RUN_MIGRATIONS`
 
-**Decisión:** la app aplica las migraciones pendientes cada vez que inicia (`migrationsRun: true`).
+**Decisión:** la app aplica las migraciones pendientes al iniciar solo si `RUN_MIGRATIONS=true` (`migrationsRun` de TypeORM). La variable es obligatoria y no tiene valor por defecto: si falta, la app no inicia.
+- `.env.example` y Docker Compose la definen en `true`, para que la base local quede actualizada sin pasos extra.
+- Con `false`, la app se conecta sin modificar el esquema.
 
-**Por qué:** con `docker compose up` el esquema queda actualizado sin pasos adicionales. Como consecuencia, al apuntar `DATABASE_URL` a otra base, las migraciones se aplican sobre esa base al iniciar.
+**Por qué:** no está confirmado si se pueden aplicar migraciones sobre la base de Neon que compartió Cocos. Si la app las aplicara siempre, apuntar `DATABASE_URL` a Neon cambiaría su esquema (restricciones, índices, la extensión `unaccent` y una función SQL) sin pedir permiso. Al ser obligatoria, la variable fuerza a decidir de forma explícita en cada entorno si se migra o no.
 
-**Alternativas descartadas:** correrlas a mano con `npm run migration:run`. Da más control, pero agrega un paso que es fácil olvidar.
+**Alternativas descartadas:**
+- Migrar siempre al iniciar (`migrationsRun: true`): es lo más simple, pero basta un error en `DATABASE_URL` para modificar una base ajena.
+- Valor por defecto `true`: olvidarse la variable al apuntar a Neon aplicaría las migraciones.
+- Valor por defecto `false`: más seguro, pero si se olvida la variable en local la base queda sin migrar y los errores aparecen recién al usar la API.
+- Correrlas siempre a mano con `npm run migration:run`: da control, pero agrega un paso fácil de olvidar en local.

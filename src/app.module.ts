@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import Joi from 'joi';
 import { AppController } from './app.controller';
+import { typeOrmOptions } from './database/typeorm-options';
 
 @Module({
   imports: [
@@ -12,6 +14,14 @@ import { AppController } from './app.controller';
           .uri({ scheme: ['postgres', 'postgresql'] })
           .required(),
         PORT: Joi.number().port().default(3000),
+        RUN_MIGRATIONS: Joi.boolean().required(),
+      }),
+    }),
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => ({
+        ...typeOrmOptions(config),
+        migrationsRun: config.getOrThrow<boolean>('RUN_MIGRATIONS'),
       }),
     }),
   ],

@@ -71,7 +71,7 @@ Se agregan en tareas futuras:
 
 - **`database.sql` no se edita.** Es la base del esquema y de los datos. Todo cambio de esquema va en una migración de TypeORM, y `synchronize` siempre está en `false`.
 - **Las columnas de Postgres están en minúsculas** (`instrumentid`, `userid`, `previousclose`, `accountnumber`), porque `database.sql` no las cita. En las entidades se mapean con `@Column({ name: '...' })`.
-- **Las migraciones se aplican solas al iniciar la app** (`migrationsRun: true`). Iniciar la app contra una base aplica las migraciones sobre esa base.
+- **Las migraciones se aplican al iniciar la app solo si `RUN_MIGRATIONS=true`.** La variable es obligatoria. Con `true`, iniciar la app contra una base aplica las migraciones sobre esa base.
 - **No apuntar `DATABASE_URL` a la base hosteada** hasta que Cocos confirme que se pueden aplicar migraciones (T0.1).
 - **Credenciales:** la URL de la base hosteada incluye la contraseña y el repo es público. Solo puede estar en `.env`; nunca en código, docs, `.env.example`, colecciones ni mensajes de commit.
 - **Montos, saldos y rendimientos se calculan en Postgres con `NUMERIC`,** no con `number` de JavaScript.
