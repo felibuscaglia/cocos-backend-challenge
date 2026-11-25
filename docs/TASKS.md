@@ -156,7 +156,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Fase 3 — Migraciones de esquema**
 - [x] T3.1 — Restricciones NOT NULL y CHECK
 - [x] T3.2 — Unicidad e índices
-- [ ] T3.3 — Extensión `unaccent`
+- [x] T3.3 — Extensión `unaccent`
 - [ ] T3.4 — Función SQL de posiciones por usuario
 
 **Fase 4 — Piezas transversales**
@@ -391,12 +391,12 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** permitir búsquedas que ignoren acentos.
 
 **Subtareas**
-- [ ] `CREATE EXTENSION IF NOT EXISTS unaccent`.
-- [ ] Escribir un `down` con `DROP EXTENSION IF EXISTS unaccent`.
+- [x] `CREATE EXTENSION IF NOT EXISTS unaccent`.
+- [x] Escribir un `down` con `DROP EXTENSION IF EXISTS unaccent`.
 
 **Criterios de aceptación**
-- [ ] `SELECT unaccent('Compañía Río')` devuelve `Compania Rio` en la base de Docker.
-- [ ] `npm run migration:revert` elimina la extensión.
+- [x] `SELECT unaccent('Compañía Río')` devuelve `Compania Rio` en la base de Docker.
+- [x] `npm run migration:revert` elimina la extensión.
 
 ### T3.4 — Función SQL de posiciones por usuario
 
