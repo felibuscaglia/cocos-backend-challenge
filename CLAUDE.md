@@ -79,4 +79,5 @@ Se agregan en tareas futuras:
 ## Convenciones
 
 - En inglés: el código (identificadores, archivos, campos de la API).
-- En español: README, `docs/`, mensajes de commit, descripciones de Swagger, mensajes de error y de rechazo, y la colección de Postman.
+- En español: README, `docs/`, mensajes de commit, descripciones de Swagger, mensajes de error y de rechazo, la colección de Postman y los comentarios en el código.
+- **Comentarios solo cuando aportan algo que el código no dice:** el porqué de una decisión, una particularidad no obvia o una trampa conocida (ej. la ruta de datos de `postgres:18`). No comentar lo que ya se entiende leyendo la línea (ej. `ports: "5432:5432"` no necesita "publica el puerto").

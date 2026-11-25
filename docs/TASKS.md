@@ -147,7 +147,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Fase 1 — Docker**
 - [x] T1.1 — Dockerfile de la API
-- [ ] T1.2 — Docker Compose (base de datos + API)
+- [x] T1.2 — Docker Compose (base de datos + API)
 
 **Fase 2 — Acceso a datos con TypeORM**
 - [ ] T2.1 — Conexión y configuración de migraciones
@@ -288,23 +288,22 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** levantar base y API con un solo comando, con los datos de `database.sql`.
 
 **Subtareas**
-- [ ] Servicio `db`:
-  - [ ] Imagen `postgres:18` (igual versión que Neon), con usuario, contraseña y base solo de desarrollo.
-  - [ ] Montar `database.sql` en `/docker-entrypoint-initdb.d/` para que se ejecute en la primera inicialización.
-  - [ ] Volumen con nombre para los datos. En `postgres:18` se monta en `/var/lib/postgresql` (cambió respecto de versiones anteriores).
-  - [ ] Healthcheck con `pg_isready`.
-  - [ ] Publicar el puerto 5432, para poder correr la app con npm contra esta base.
-- [ ] Servicio `api`:
-  - [ ] Construido con el Dockerfile de T1.1.
-  - [ ] Espera a que `db` esté sana (`depends_on` con `condition: service_healthy`).
-  - [ ] Publica el puerto de la API.
-  - [ ] `DATABASE_URL` apunta por defecto a `db` (definido en `docker-compose.yml`, no en el código) y se puede sobrescribir desde `.env` (ej. Neon).
+- [x] Servicio `db`:
+  - [x] Imagen `postgres:18` (igual versión que Neon), con usuario, contraseña y base solo de desarrollo.
+  - [x] Montar `database.sql` en `/docker-entrypoint-initdb.d/` para que se ejecute en la primera inicialización.
+  - [x] Volumen con nombre para los datos. En `postgres:18` se monta en `/var/lib/postgresql` (cambió respecto de versiones anteriores).
+  - [x] Healthcheck con `pg_isready`.
+  - [x] Publicar el puerto 5432, para poder correr la app con npm contra esta base.
+- [x] Servicio `api`:
+  - [x] Construido con el Dockerfile de T1.1.
+  - [x] Espera a que `db` esté sana (`depends_on` con `condition: service_healthy`).
+  - [x] Publica el puerto de la API.
+  - [x] `DATABASE_URL` apunta por defecto a `db` (definido en `docker-compose.yml`, no en el código) y se puede sobrescribir desde `.env` (ej. Neon).
 
 **Criterios de aceptación**
-- [ ] Con el repo recién clonado, `docker compose up` deja la API respondiendo en `http://localhost:<PORT>` sin configurar nada más.
-- [ ] En el primer arranque, la base tiene exactamente los datos de `database.sql`: 4 usuarios, 66 instrumentos, 126 filas de `marketdata` y 11 órdenes.
-- [ ] `docker compose down -v` seguido de `docker compose up` deja la base otra vez en el estado del seed.
-- [ ] `docker-compose.yml` no contiene nada de Neon.
+- [x] Con el repo recién clonado, `docker compose up` deja la API respondiendo en `http://localhost:<PORT>` sin configurar nada más.
+- [x] En el primer arranque, la base tiene exactamente los datos de `database.sql`: 4 usuarios, 66 instrumentos, 126 filas de `marketdata` y 11 órdenes.
+- [x] `docker compose down -v` seguido de `docker compose up` deja la base otra vez en el estado del seed.
 
 ---
 

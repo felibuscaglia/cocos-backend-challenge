@@ -1,0 +1,38 @@
+services:
+  db:
+    # Misma versión mayor de Postgres que la base hosteada en Neon
+    image: postgres:18
+    # Credenciales solo para desarrollo local
+    environment:
+      POSTGRES_USER: cocos
+      POSTGRES_PASSWORD: cocos
+      POSTGRES_DB: cocos
+    volumes:
+      # Postgres ejecuta este script solo en la primera inicialización (con el directorio de datos vacío)
+      - ./database.sql:/docker-entrypoint-initdb.d/database.sql:ro
+      # Los datos persisten entre reinicios; en postgres:18 se montan en /var/lib/postgresql
+      - db-data:/var/lib/postgresql
+    # La base está sana cuando acepta conexiones
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cocos -d cocos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    ports:
+      - "5432:5432"
+
+  api:
+    build: .
+    depends_on:
+      db:
+        condition: service_healthy
+    # Compose lee PORT de .env; el contenedor debe escuchar en el mismo puerto que se publica
+    environment:
+      PORT: ${PORT:-3000}
+      # Si .env define DATABASE_URL, lo reemplaza: dentro del contenedor el host debe ser db, no localhost
+      DATABASE_URL: ${DATABASE_URL:-postgresql://cocos:cocos@db:5432/cocos}
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+
+volumes:
+  db-data:
