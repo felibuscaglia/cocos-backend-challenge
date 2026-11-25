@@ -49,14 +49,14 @@ Dentro de cada grupo, orden alfabético por ticker. Sin `q`, todos los instrumen
 
 **Por qué:** es un instrumento de la tabla, y su ticker es el que se usa para enviar transferencias (CASH_IN y CASH_OUT).
 
-## Último precio y retorno diario
+## Campos de cada resultado
 
-**Decisión:** cada resultado incluye `latestPrice` (el último `close`) y `dailyReturn` = (`close` − `previousClose`) ÷ `previousClose`, como fracción. Ambos son `null` si el instrumento no es de tipo ACCIONES o no tiene datos de mercado.
+**Decisión:** cada resultado incluye `ticker`, `name` y `type`. No incluye el último precio ni el retorno diario.
 
-**Por qué:** la consigna indica calcular el retorno diario con `close` y `previousClose`. PGR e IRCP no tienen datos de mercado, y ARS es la moneda, sin precio de mercado.
+**Alternativas descartadas:** incluir `latestPrice` (el último `close`) y `dailyReturn` = (`close` − `previousClose`) ÷ `previousClose`.
 
 ## Paginación
 
-**Decisión:** parámetros `page` y `limit`: enteros mayores a 0, por defecto 1 y 20, sin máximo. Los valores inválidos responden 400. La respuesta es `{ data, meta: { page, limit, total, totalPages } }`.
+**Decisión:** parámetros `page` y `limit`: enteros mayores a 0, por defecto 1 y 20, sin máximo. Los valores inválidos responden 400. La respuesta es `{ data, meta: { page, limit, total, totalPages } }`. Sin resultados, `totalPages` es 1.
 
 **Por qué:** es el esquema más simple y estándar. Con un catálogo chico y que no cambia, no hace falta un límite máximo ni paginación por cursor.

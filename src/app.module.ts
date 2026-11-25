@@ -8,6 +8,7 @@ import { addTransactionalDataSource } from 'typeorm-transactional';
 import { AppController } from './app.controller';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { typeOrmOptions } from './database/typeorm-options';
+import { InstrumentsModule } from './instruments/instruments.module';
 import { OrdersModule } from './orders/orders.module';
 import { UsersModule } from './users/users.module';
 
@@ -34,6 +35,7 @@ import { UsersModule } from './users/users.module';
     }),
     UsersModule,
     OrdersModule,
+    InstrumentsModule,
   ],
   controllers: [AppController],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],

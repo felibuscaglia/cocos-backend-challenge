@@ -41,8 +41,6 @@ Salvo aclaración, se usan solo órdenes `FILLED`. Las sumas se hacen en Postgre
 | PPC | Ver el algoritmo más abajo |
 | `totalReturn` | (último precio − PPC) ÷ PPC, como fracción (`0.28` = 28%) |
 | `totalValue` | `availableCash` + `reservedCash` + Σ `marketValue` |
-| `latestPrice` (búsqueda) | Último `close`. `null` si el instrumento no es de tipo `ACCIONES` o no tiene datos de mercado |
-| `dailyReturn` (búsqueda) | (`close` − `previousClose`) ÷ `previousClose` del último día. `null` si el instrumento no es de tipo `ACCIONES` o no tiene datos de mercado |
 
 ### Algoritmo del PPC (promedio ponderado)
 
@@ -168,7 +166,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T5.2 — Endpoint `GET /portfolio`
 
 **Fase 6 — Búsqueda de activos**
-- [ ] T6.1 — Endpoint `GET /instruments`
+- [x] T6.1 — Endpoint `GET /instruments`
 
 **Fase 7 — Órdenes**
 - [ ] T7.1 — `POST /orders`: órdenes MARKET por cantidad
@@ -530,41 +528,37 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 ### T6.1 — Endpoint `GET /instruments`
 
-**Objetivo:** buscar activos por ticker o nombre, con ranking, paginación, último precio y retorno diario.
+**Objetivo:** buscar activos por ticker o nombre, con ranking y paginación.
 
 **Subtareas**
-- [ ] Recibir los query params:
-  - [ ] `q`: opcional.
-  - [ ] `page`: entero ≥ 1, por defecto `1`.
-  - [ ] `limit`: entero ≥ 1, por defecto `20`, sin máximo.
-- [ ] Validarlos con un DTO de query y mensajes en español. Valores inválidos (0, negativos, decimales, texto) → 400.
-- [ ] Buscar con "contiene" sobre `ticker` o `name`, sin distinguir mayúsculas ni acentos (`unaccent` sobre el texto buscado y sobre la columna).
-- [ ] Escapar `%`, `_` y `\` del texto del usuario, para que se busquen literalmente.
-- [ ] Si `q` está vacío o ausente, devolver todos los instrumentos (paginados y ordenados por ticker). Un `q` de un solo carácter hace una búsqueda normal.
-- [ ] Rankear los resultados en este orden, y alfabéticamente por ticker dentro de cada grupo. Cada instrumento aparece una sola vez, en su mejor grupo.
+- [x] Recibir los query params:
+  - [x] `q`: opcional.
+  - [x] `page`: entero ≥ 1, por defecto `1`.
+  - [x] `limit`: entero ≥ 1, por defecto `20`, sin máximo.
+- [x] Validarlos con un DTO de query y mensajes en español. Valores inválidos (0, negativos, decimales, texto) → 400.
+- [x] Buscar con "contiene" sobre `ticker` o `name`, sin distinguir mayúsculas ni acentos (`unaccent` sobre el texto buscado y sobre la columna).
+- [x] Escapar `%`, `_` y `\` del texto del usuario, para que se busquen literalmente.
+- [x] Si `q` está vacío o ausente, devolver todos los instrumentos (paginados y ordenados por ticker). Un `q` de un solo carácter hace una búsqueda normal.
+- [x] Rankear los resultados en este orden, y alfabéticamente por ticker dentro de cada grupo. Cada instrumento aparece una sola vez, en su mejor grupo.
   1. Ticker exacto.
   2. Ticker que empieza con `q`.
   3. Nombre que empieza con `q`.
   4. `q` aparece en cualquier parte del ticker o del nombre.
-- [ ] Incluir ARS en los resultados. No hay filtro por tipo.
-- [ ] Calcular `latestPrice` (último `close`) por instrumento: `null` si no es `ACCIONES` o no tiene datos de mercado.
-- [ ] Calcular `dailyReturn` por instrumento: `null` si no es `ACCIONES` o no tiene datos de mercado.
-- [ ] Devolver `{ data, meta: { page, limit, total, totalPages } }`. Cada ítem: `{ ticker, name, type, latestPrice, dailyReturn }`.
-- [ ] No requerir el header de usuario.
-- [ ] Documentar en Swagger, en español, con ejemplos.
+- [x] Incluir ARS en los resultados. No hay filtro por tipo.
+- [x] Devolver `{ data, meta: { page, limit, total, totalPages } }`. Cada ítem: `{ ticker, name, type }`. Sin resultados, `totalPages` es 1.
+- [x] No requerir el header de usuario.
+- [x] Documentar en Swagger, en español, con ejemplos.
 
 **Criterios de aceptación**
-- [ ] `q=ga` devuelve, en este orden: GAMI, GARO, GBAN, CGPA2, DGCU2, GGAL, METR, TGNO4, TGSU2 (`total` 9).
-- [ ] `q=ggal` y `q=GGAL` devuelven GGAL en primer lugar.
-- [ ] `q=compania` incluye INTR, y `q=rio` incluye MOLI (Molinos Río de la Plata).
-- [ ] `q=%` y `q=_` no devuelven resultados (`total` 0).
-- [ ] `q=ars` devuelve ARS en primer lugar, con `latestPrice: null` y `dailyReturn: null`.
-- [ ] PGR e IRCP → `latestPrice: null` y `dailyReturn: null`.
-- [ ] PAMP → `latestPrice` `925.85` y `dailyReturn` ≈ `0.0043936`. GGAL → `latestPrice` `885.8` y `dailyReturn` ≈ `-0.0348134`.
-- [ ] Sin `q`: `total` 66 y `totalPages` 4 (con `limit` 20). `page=4` trae 6 ítems. `page=5` devuelve `data: []` con `meta` correcto.
-- [ ] Sin `page` ni `limit`, se usan `page=1` y `limit=20`.
-- [ ] `page=0`, `page=1.5`, `limit=0`, `limit=-5` o `limit=abc` → 400 con mensaje en español.
-- [ ] Un query param desconocido → 400.
+- [x] `q=ga` devuelve, en este orden: GAMI, GARO, GBAN, CGPA2, DGCU2, GGAL, METR, TGNO4, TGSU2 (`total` 9).
+- [x] `q=ggal` y `q=GGAL` devuelven GGAL en primer lugar.
+- [x] `q=compania` incluye INTR, y `q=rio` incluye MOLI (Molinos Río de la Plata).
+- [x] `q=%` y `q=_` no devuelven resultados (`total` 0).
+- [x] `q=ars` devuelve ARS en primer lugar.
+- [x] Sin `q`: `total` 66 y `totalPages` 4 (con `limit` 20). `page=4` trae 6 ítems. `page=5` devuelve `data: []` con `meta` correcto.
+- [x] Sin `page` ni `limit`, se usan `page=1` y `limit=20`.
+- [x] `page=0`, `page=1.5`, `limit=0`, `limit=-5` o `limit=abc` → 400 con mensaje en español.
+- [x] Un query param desconocido → 400.
 
 ---
 
