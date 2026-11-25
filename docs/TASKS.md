@@ -11,7 +11,7 @@ Lista de tareas para completar el challenge de punta a punta. Cada tarea equival
 - **Idioma:** el código va en inglés. README, documentación, mensajes de commit, descripciones de Swagger, mensajes de error y de rechazo, y descripciones de Postman van en español.
 - **Commits:** un commit por tarea, directo a `main`. Las tareas marcadas *(sin commit)* no generan cambios en el repo.
 - **Credenciales:** la URL de la base hosteada (Neon) incluye la contraseña y el repositorio es público. Solo puede estar en `.env` (ignorado por git). Nunca en código, documentación, `.env.example`, colecciones ni mensajes de commit.
-- **Base de datos:** `database.sql` es la base del esquema y de los datos. Todo cambio se hace con migraciones de TypeORM encima.
+- **Base de datos:** `src/database/seed.sql` es la base del esquema y de los datos. Todo cambio se hace con migraciones de TypeORM encima.
 - **Fuera de alcance por ahora:** CI, claves de idempotencia, simulación de mercado, ejecución automática de órdenes LIMIT, manejo de zonas horarias, comisiones y horarios de mercado.
 
 ---
@@ -177,11 +177,11 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T7.6 — Cancelación de órdenes
 
 **Fase 8 — Tests funcionales del envío de órdenes**
-- [ ] T8.1 — Infraestructura de tests con Testcontainers
-- [ ] T8.2 — Tests: órdenes ejecutadas y aceptadas
-- [ ] T8.3 — Tests: órdenes rechazadas
-- [ ] T8.4 — Tests: validaciones (400) y recursos inexistentes (404)
-- [ ] T8.5 — Tests: concurrencia
+- [x] T8.1 — Infraestructura de tests con Testcontainers
+- [x] T8.2 — Tests: órdenes ejecutadas y aceptadas
+- [x] T8.3 — Tests: órdenes rechazadas
+- [x] T8.4 — Tests: validaciones (400) y recursos inexistentes (404)
+- [x] T8.5 — Tests: concurrencia
 
 **Fase 9 — Documentación y cierre**
 - [ ] T9.1 — README
@@ -282,12 +282,12 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 ### T1.2 — Docker Compose (base de datos + API)
 
-**Objetivo:** levantar base y API con un solo comando, con los datos de `database.sql`.
+**Objetivo:** levantar base y API con un solo comando, con los datos de `src/database/seed.sql`.
 
 **Subtareas**
 - [x] Servicio `db`:
   - [x] Imagen `postgres:18` (igual versión que Neon), con usuario, contraseña y base solo de desarrollo.
-  - [x] Montar `database.sql` en `/docker-entrypoint-initdb.d/` para que se ejecute en la primera inicialización.
+  - [x] Montar `src/database/seed.sql` en `/docker-entrypoint-initdb.d/` para que se ejecute en la primera inicialización.
   - [x] Volumen con nombre para los datos. En `postgres:18` se monta en `/var/lib/postgresql` (cambió respecto de versiones anteriores).
   - [x] Healthcheck con `pg_isready`.
   - [x] Publicar el puerto 5432, para poder correr la app con npm contra esta base.
@@ -299,7 +299,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Criterios de aceptación**
 - [x] Con el repo recién clonado, `docker compose up` deja la API respondiendo en `http://localhost:<PORT>` sin configurar nada más.
-- [x] En el primer arranque, la base tiene exactamente los datos de `database.sql`: 4 usuarios, 66 instrumentos, 126 filas de `marketdata` y 11 órdenes.
+- [x] En el primer arranque, la base tiene exactamente los datos de `src/database/seed.sql`: 4 usuarios, 66 instrumentos, 126 filas de `marketdata` y 11 órdenes.
 - [x] `docker compose down -v` seguido de `docker compose up` deja la base otra vez en el estado del seed.
 
 ---
@@ -313,7 +313,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Subtareas**
 - [x] Instalar `@nestjs/typeorm`, `typeorm` y `pg`.
 - [x] Configurar `TypeOrmModule.forRootAsync` leyendo `DATABASE_URL` desde `ConfigService`.
-- [x] `synchronize: false` en todos los entornos (el esquema sale de `database.sql` + migraciones).
+- [x] `synchronize: false` en todos los entornos (el esquema sale de `src/database/seed.sql` + migraciones).
 - [x] `migrationsRun` según la variable obligatoria `RUN_MIGRATIONS`, leída desde `ConfigService`.
 - [x] Crear un `DataSource` para la CLI de TypeORM con la misma configuración.
 - [x] Agregar scripts npm `migration:create`, `migration:run` y `migration:revert`.
@@ -690,7 +690,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 ## Fase 8 — Tests funcionales del envío de órdenes
 
-Todos los tests son HTTP (supertest) contra `POST /orders`, sobre una base real en un contenedor.
+Todos los tests son HTTP (Vitest + supertest) contra `POST /orders`, sobre una base real en un contenedor.
 - **201:** se verifican la respuesta y la fila guardada en `orders`.
 - **4xx:** se verifican el formato del error y que la cantidad de órdenes no cambió.
 
@@ -699,107 +699,107 @@ Todos los tests son HTTP (supertest) contra `POST /orders`, sobre una base real 
 **Objetivo:** que los tests corran contra un Postgres real, descartable y siempre en el estado del seed.
 
 **Subtareas**
-- [ ] Instalar `@testcontainers/postgresql`.
-- [ ] Levantar un contenedor `postgres:18` por corrida y cargar `database.sql`.
-- [ ] Crear la app Nest de test apuntando a ese contenedor, con `RUN_MIGRATIONS=true` para que aplique las migraciones al iniciar.
-- [ ] Antes de cada test, restaurar el seed: vaciar las tablas reiniciando los ids y volver a insertar los datos de `database.sql`.
-- [ ] Ajustar `test/jest-e2e.json` (timeouts, setup y teardown) y el script `test:e2e`.
-- [ ] Crear helpers para enviar órdenes y leer filas de `orders`.
-- [ ] Detener el contenedor al terminar.
+- [x] Instalar `@testcontainers/postgresql`.
+- [x] Levantar un contenedor `postgres:18` por corrida y cargar `src/database/seed.sql`.
+- [x] Crear la app Nest de test apuntando a ese contenedor, con `RUN_MIGRATIONS=true` para que aplique las migraciones al iniciar.
+- [x] Antes de cada test, restaurar el seed: vaciar las tablas reiniciando los ids y volver a insertar los datos de `src/database/seed.sql`.
+- [x] Configurar Vitest en `test/vitest-e2e.config.mts` (timeouts, setup y teardown) y el script `test:e2e`.
+- [x] Crear helpers para enviar órdenes y leer filas de `orders`.
+- [x] Detener el contenedor al terminar.
 
 **Criterios de aceptación**
-- [ ] `npm run test:e2e` corre con Docker abierto, sin `.env` ni otra configuración.
-- [ ] Cada test arranca exactamente con el seed: la primera orden nueva tiene id 12.
-- [ ] Los tests nunca tocan la base de Docker Compose ni Neon.
-- [ ] Sin Docker, los tests fallan con un mensaje claro.
+- [x] `npm run test:e2e` corre con Docker abierto, sin `.env` ni otra configuración.
+- [x] Cada test arranca exactamente con el seed: la primera orden nueva tiene id 12.
+- [x] Los tests nunca tocan la base de Docker Compose ni Neon.
+- [x] Sin Docker, los tests fallan con un mensaje claro.
 
 ### T8.2 — Tests: órdenes ejecutadas y aceptadas
 
 **Casos**
-- [ ] MARKET BUY por `size` → `FILLED` con `price` igual al último `close` (PAMP 925.85).
-- [ ] MARKET SELL por `size` dentro de la tenencia → `FILLED`.
-- [ ] MARKET BUY por `amount` → `size` redondeado hacia abajo (50000 de PAMP → 54).
-- [ ] MARKET SELL por `amount` → `size` redondeado hacia abajo (9000 de PAMP → 9).
-- [ ] LIMIT BUY por `size` → `NEW` con el precio límite.
-- [ ] LIMIT BUY por `amount` → `size = floor(amount ÷ límite)` (50000 a 900 → 55).
-- [ ] LIMIT SELL → `NEW`.
-- [ ] LIMIT BUY con precio por encima del mercado → sigue `NEW`.
-- [ ] MARKET con `price` en el body → se ignora y se usa el último `close`.
-- [ ] CASH_IN → `FILLED`, instrumento ARS, `size = amount`, `price` 1.
-- [ ] CASH_IN con `size` en el body → se ignora.
-- [ ] CASH_OUT dentro de `availableCash` → `FILLED`.
-- [ ] Usuario 2: después de un CASH_IN puede comprar.
-- [ ] `datetime` lo asigna la base: no es nulo y es reciente.
-- [ ] La respuesta tiene exactamente los campos acordados, sin `userId` ni `instrumentId`, y con `rejection: null`.
+- [x] MARKET BUY por `size` → `FILLED` con `price` igual al último `close` (PAMP 925.85).
+- [x] MARKET SELL por `size` dentro de la tenencia → `FILLED`.
+- [x] MARKET BUY por `amount` → `size` redondeado hacia abajo (50000 de PAMP → 54).
+- [x] MARKET SELL por `amount` → `size` redondeado hacia abajo (9000 de PAMP → 9).
+- [x] LIMIT BUY por `size` → `NEW` con el precio límite.
+- [x] LIMIT BUY por `amount` → `size = floor(amount ÷ límite)` (50000 a 900 → 55).
+- [x] LIMIT SELL → `NEW`.
+- [x] LIMIT BUY con precio por encima del mercado → sigue `NEW`.
+- [x] MARKET con `price` en el body → se ignora y se usa el último `close`.
+- [x] CASH_IN → `FILLED`, instrumento ARS, `size = amount`, `price` 1.
+- [x] CASH_IN con `size` en el body → se ignora.
+- [x] CASH_OUT dentro de `availableCash` → `FILLED`.
+- [x] Usuario 2: después de un CASH_IN puede comprar.
+- [x] `datetime` lo asigna la base: no es nulo y es reciente.
+- [x] La respuesta tiene exactamente los campos acordados, sin `userId` ni `instrumentId`, y con `rejection: null`.
 
 **Criterios de aceptación**
-- [ ] Todos los casos pasan, y cada uno verifica la respuesta y la fila guardada.
+- [x] Todos los casos pasan, y cada uno verifica la respuesta y la fila guardada.
 
 ### T8.3 — Tests: órdenes rechazadas
 
 En cada caso se espera 201, `status: "REJECTED"`, `rejection` con el código y el mensaje en español, y la fila guardada con el `size` y el `price` esperados.
 
 **Casos**
-- [ ] BUY por más que `availableCash` → `INSUFFICIENT_FUNDS`.
-- [ ] BUY que entra en el efectivo total pero no en el disponible, por las órdenes reservadas (3000 METR) → `INSUFFICIENT_FUNDS`.
-- [ ] LIMIT BUY sin fondos suficientes → `INSUFFICIENT_FUNDS`.
-- [ ] Dos LIMIT BUY que juntas superan lo disponible → la segunda `REJECTED`.
-- [ ] Usuario 2, sin efectivo, compra 1 PAMP → `INSUFFICIENT_FUNDS`.
-- [ ] SELL por más que la tenencia (41 PAMP) → `INSUFFICIENT_SHARES`.
-- [ ] SELL de un activo que no tiene (usuario 2) → `INSUFFICIENT_SHARES`.
-- [ ] SELL sobre la posición negativa del seed (BMA, usuario 1) → `INSUFFICIENT_SHARES`.
-- [ ] SELL bloqueada porque una SELL `NEW` reserva las acciones → `INSUFFICIENT_SHARES`.
-- [ ] SELL por monto mayor que la tenencia (50000 de PAMP → `size` 54) → `INSUFFICIENT_SHARES`.
-- [ ] Monto insuficiente (500 de PAMP) → `AMOUNT_TOO_LOW` con `size` 0.
-- [ ] MARKET sobre PGR y sobre IRCP → `NO_MARKET_DATA` con `price` 0.
-- [ ] LIMIT sobre PGR → `NO_MARKET_DATA` con `price` igual al límite.
-- [ ] MARKET por monto sobre PGR → `NO_MARKET_DATA` con `size` 0 y `price` 0.
-- [ ] CASH_OUT por más que `availableCash` → `INSUFFICIENT_FUNDS`.
-- [ ] CASH_OUT que entra en el total pero no en el disponible (700000, usuario 1) → `INSUFFICIENT_FUNDS`.
-- [ ] Prioridad: PGR con monto bajo → `NO_MARKET_DATA`. Usuario 2 con monto bajo → `AMOUNT_TOO_LOW`.
-- [ ] Una orden `REJECTED` no consume saldo: una orden válida posterior se ejecuta.
+- [x] BUY por más que `availableCash` → `INSUFFICIENT_FUNDS`.
+- [x] BUY que entra en el efectivo total pero no en el disponible, por las órdenes reservadas (3000 METR) → `INSUFFICIENT_FUNDS`.
+- [x] LIMIT BUY sin fondos suficientes → `INSUFFICIENT_FUNDS`.
+- [x] Dos LIMIT BUY que juntas superan lo disponible → la segunda `REJECTED`.
+- [x] Usuario 2, sin efectivo, compra 1 PAMP → `INSUFFICIENT_FUNDS`.
+- [x] SELL por más que la tenencia (41 PAMP) → `INSUFFICIENT_SHARES`.
+- [x] SELL de un activo que no tiene (usuario 2) → `INSUFFICIENT_SHARES`.
+- [x] SELL sobre la posición negativa del seed (BMA, usuario 1) → `INSUFFICIENT_SHARES`.
+- [x] SELL bloqueada porque una SELL `NEW` reserva las acciones → `INSUFFICIENT_SHARES`.
+- [x] SELL por monto mayor que la tenencia (50000 de PAMP → `size` 54) → `INSUFFICIENT_SHARES`.
+- [x] Monto insuficiente (500 de PAMP) → `AMOUNT_TOO_LOW` con `size` 0.
+- [x] MARKET sobre PGR y sobre IRCP → `NO_MARKET_DATA` con `price` 0.
+- [x] LIMIT sobre PGR → `NO_MARKET_DATA` con `price` igual al límite.
+- [x] MARKET por monto sobre PGR → `NO_MARKET_DATA` con `size` 0 y `price` 0.
+- [x] CASH_OUT por más que `availableCash` → `INSUFFICIENT_FUNDS`.
+- [x] CASH_OUT que entra en el total pero no en el disponible (700000, usuario 1) → `INSUFFICIENT_FUNDS`.
+- [x] Prioridad: PGR con monto bajo → `NO_MARKET_DATA`. Usuario 2 con monto bajo → `AMOUNT_TOO_LOW`.
+- [x] Una orden `REJECTED` no consume saldo: una orden válida posterior se ejecuta.
 
 **Criterios de aceptación**
-- [ ] Todos los casos pasan, verificando la respuesta y la fila guardada.
+- [x] Todos los casos pasan, verificando la respuesta y la fila guardada.
 
 ### T8.4 — Tests: validaciones (400) y recursos inexistentes (404)
 
 En cada caso se verifican el código HTTP, el formato del error (`statusCode`, `message` en español, `error` en inglés, `path`, `timestamp`) y que la cantidad de órdenes no cambió.
 
 **Casos 404**
-- [ ] Sin `X-User-Id`, o con `abc`, `0`, `-1` o `999`.
-- [ ] Ticker inexistente.
-- [ ] Ticker en minúsculas (`pamp`).
-- [ ] Header inválido con body inválido → 404 (el header se valida primero).
+- [x] Sin `X-User-Id`, o con `abc`, `0`, `-1` o `999`.
+- [x] Ticker inexistente.
+- [x] Ticker en minúsculas (`pamp`).
+- [x] Header inválido con body inválido → 404 (el header se valida primero).
 
 **Casos 400**
-- [ ] JSON mal formado.
-- [ ] Campo desconocido (ej. `datetime`, `userId`).
-- [ ] Falta `ticker`, `side` o `type`.
-- [ ] `side` o `type` con un valor fuera de la lista.
-- [ ] BUY/SELL sin `size` ni `amount`.
-- [ ] BUY/SELL con `size` y `amount` a la vez.
-- [ ] `size` 0, negativo, decimal o texto.
-- [ ] `amount` 0, negativo, con 3 decimales o texto.
-- [ ] LIMIT sin `price`, o con `price` 0, negativo o con 3 decimales.
-- [ ] BUY/SELL sobre ARS.
-- [ ] CASH_IN/CASH_OUT sobre un ticker distinto de ARS.
-- [ ] CASH_IN/CASH_OUT con `type` LIMIT.
-- [ ] CASH_IN/CASH_OUT sin `amount`, o con `amount` decimal.
+- [x] JSON mal formado.
+- [x] Campo desconocido (ej. `datetime`, `userId`).
+- [x] Falta `ticker`, `side` o `type`.
+- [x] `side` o `type` con un valor fuera de la lista.
+- [x] BUY/SELL sin `size` ni `amount`.
+- [x] BUY/SELL con `size` y `amount` a la vez.
+- [x] `size` 0, negativo, decimal o texto.
+- [x] `amount` 0, negativo, con 3 decimales o texto.
+- [x] LIMIT sin `price`, o con `price` 0, negativo o con 3 decimales.
+- [x] BUY/SELL sobre ARS.
+- [x] CASH_IN/CASH_OUT sobre un ticker distinto de ARS.
+- [x] CASH_IN/CASH_OUT con `type` LIMIT.
+- [x] CASH_IN/CASH_OUT sin `amount`, o con `amount` decimal.
 
 **Criterios de aceptación**
-- [ ] Todos los casos pasan y ninguno deja órdenes guardadas.
+- [x] Todos los casos pasan y ninguno deja órdenes guardadas.
 
 ### T8.5 — Tests: concurrencia
 
 **Casos**
-- [ ] Dos BUY simultáneas que juntas superan lo disponible → una `FILLED` y otra `REJECTED` con `INSUFFICIENT_FUNDS`.
-- [ ] Dos SELL simultáneas que juntas superan las acciones → una `FILLED` y otra `REJECTED` con `INSUFFICIENT_SHARES`.
-- [ ] CASH_OUT y BUY simultáneos que juntos superan lo disponible → uno `FILLED` y otro `REJECTED`.
-- [ ] Al terminar cada caso, los saldos en la base son consistentes: `availableCash` ≥ 0, y las acciones disponibles de PAMP ≥ 0.
+- [x] Dos BUY simultáneas que juntas superan lo disponible → una `FILLED` y otra `REJECTED` con `INSUFFICIENT_FUNDS`.
+- [x] Dos SELL simultáneas que juntas superan las acciones → una `FILLED` y otra `REJECTED` con `INSUFFICIENT_SHARES`.
+- [x] CASH_OUT y BUY simultáneos que juntos superan lo disponible → uno `FILLED` y otro `REJECTED`.
+- [x] Al terminar cada caso, los saldos en la base son consistentes: `availableCash` ≥ 0, y las acciones disponibles de PAMP ≥ 0.
 
 **Criterios de aceptación**
-- [ ] El suite completo corre varias veces seguidas sin fallas intermitentes.
+- [x] El suite completo corre varias veces seguidas sin fallas intermitentes.
 
 ---
 

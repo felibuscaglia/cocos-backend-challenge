@@ -2,7 +2,7 @@
 
 ## Alcance: test funcional del envío de órdenes
 
-**Decisión:** tests HTTP con supertest contra `POST /orders`, que cubren todos los casos: órdenes aceptadas, órdenes rechazadas, errores 400 y 404, y concurrencia.
+**Decisión:** tests HTTP con Vitest y supertest contra `POST /orders`, que cubren todos los casos: órdenes aceptadas, órdenes rechazadas, errores 400 y 404, y concurrencia.
 
 **Por qué:** la consigna pide un test funcional sobre el envío de órdenes. Probar por HTTP cubre de punta a punta la validación, los códigos de estado, el formato de errores, el SQL y las transacciones.
 
@@ -28,3 +28,14 @@
 **Alternativas descartadas:**
 - Revertir cada test con un rollback: es más rápido, pero no permite probar dos órdenes simultáneas.
 - No restaurar: los tests dependerían del orden en que corren, y una falla arrastraría a los siguientes.
+
+## Vitest en lugar de Jest
+
+**Decisión:** los tests e2e corren con Vitest, compilando con SWC (`unplugin-swc`).
+
+**Por qué:** `@nestjs/config` 12 y `@nestjs/typeorm` 12 se publican como ESM, y `@nestjs/typeorm` usa `import.meta.url`, que no se puede convertir a CommonJS. Jest solo carga esos paquetes de forma nativa desde Node 24.9. Vitest trabaja en ESM y los carga con cualquier Node 24. SWC hace falta porque el compilador por defecto de Vitest (esbuild) no emite la metadata de los decoradores, y sin ella Nest no puede inyectar dependencias.
+
+**Alternativas descartadas:**
+- Jest exigiendo Node 24.9 o superior: obliga a actualizar Node para correr los tests.
+- Jest con una copia CommonJS de un archivo interno de `@nestjs/typeorm`: depende de la estructura interna de la librería.
+- Jest en modo ESM (`--experimental-vm-modules`): es experimental y requiere más configuración.

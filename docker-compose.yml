@@ -9,7 +9,7 @@ services:
       POSTGRES_DB: cocos
     volumes:
       # Postgres ejecuta este script solo en la primera inicialización (con el directorio de datos vacío)
-      - ./database.sql:/docker-entrypoint-initdb.d/database.sql:ro
+      - ./src/database/seed.sql:/docker-entrypoint-initdb.d/seed.sql:ro
       # Los datos persisten entre reinicios; en postgres:18 se montan en /var/lib/postgresql
       - db-data:/var/lib/postgresql
     # La base está sana cuando acepta conexiones

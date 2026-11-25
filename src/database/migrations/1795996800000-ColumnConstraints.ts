@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class ColumnConstraints1795996800000 implements MigrationInterface {
   name = 'ColumnConstraints1795996800000';

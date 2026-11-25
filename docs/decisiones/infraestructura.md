@@ -3,7 +3,7 @@
 ## Docker Compose con dos servicios
 
 **Decisión:** el proyecto se levanta con Docker Compose y dos servicios:
-- `db`: imagen oficial `postgres:18`, la misma versión que la base hosteada provista. Carga `database.sql` la primera vez que se inicializa.
+- `db`: imagen oficial `postgres:18`, la misma versión que la base hosteada provista. Carga `src/database/seed.sql` la primera vez que se inicializa.
 - `api`: la app NestJS, construida desde el `Dockerfile`.
 
 **Por qué:** cualquier persona con Docker levanta la API y una base con los datos del challenge con un solo comando (`docker compose up`). No necesita instalar Node ni Postgres, ni depende de credenciales externas. Fijar Postgres 18 evita diferencias de comportamiento con la base hosteada.

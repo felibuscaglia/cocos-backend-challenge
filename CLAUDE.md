@@ -10,7 +10,7 @@ Challenge técnico de backend para Cocos Capital: una API REST en NestJS 11 + Ty
 - **Envío y cancelación de órdenes** (MARKET, LIMIT, CASH_IN, CASH_OUT).
 
 - Consigna original: `backend-challenge.md`.
-- Esquema y datos base: `database.sql`.
+- Esquema y datos base: `src/database/seed.sql`.
 - El trabajo avanza tarea por tarea según `docs/TASKS.md`.
 
 ## Cómo trabajar con el usuario
@@ -50,7 +50,7 @@ Están en `.claude/skills/`. Se instalaron con el CLI de skills, con las version
 |---|---|
 | `nestjs-best-practices` | Código NestJS: módulos, DTOs, validación, filtros de excepciones, configuración, transacciones |
 | `postgres-best-practices` | SQL, migraciones, índices, la función de posiciones, bloqueos y concurrencia |
-| `typescript-e2e-testing` | Escritura de los tests e2e con Jest y supertest |
+| `typescript-e2e-testing` | Escritura de los tests e2e con supertest (acá corren con Vitest, no Jest) |
 | `docker-compose-patterns` | Configuración de Docker Compose |
 | `ponytail` | Cambios mínimos y respuestas concisas |
 
@@ -65,7 +65,7 @@ Las decisiones del proyecto mandan sobre las skills. Conflictos conocidos:
 - `npm run build`, `npm run lint`, `npm run format`.
 - `npm run start:dev`: app en modo watch.
 - `npm test`: tests unitarios.
-- `npm run test:e2e`: tests e2e. Desde T8.1 requiere Docker abierto (Testcontainers).
+- `npm run test:e2e`: tests e2e con Vitest. Requiere Docker abierto (Testcontainers).
 
 Se agregan en tareas futuras:
 - `docker compose up`: T1.2.
@@ -73,8 +73,10 @@ Se agregan en tareas futuras:
 
 ## Particularidades del repo
 
-- **`database.sql` no se edita.** Es la base del esquema y de los datos. Todo cambio de esquema va en una migración de TypeORM, y `synchronize` siempre está en `false`.
-- **Las columnas de Postgres están en minúsculas** (`instrumentid`, `userid`, `previousclose`, `accountnumber`), porque `database.sql` no las cita. En las entidades se mapean con `@Column({ name: '...' })`.
+- **`src/database/seed.sql` no se edita.** Es la base del esquema y de los datos. Todo cambio de esquema va en una migración de TypeORM, y `synchronize` siempre está en `false`.
+- **Las columnas de Postgres están en minúsculas** (`instrumentid`, `userid`, `previousclose`, `accountnumber`), porque `src/database/seed.sql` no las cita. En las entidades se mapean con `@Column({ name: '...' })`.
+- **Las migraciones importan los tipos con `import type`.** En los tests e2e, TypeORM carga los `.ts` de las migraciones con Node directamente (sin pasar por Vitest), y Node falla con un `import { MigrationInterface }` normal.
+- **`npm install <paquete>` puede borrar del lockfile los binarios de rolldown** (dependencia de Vitest), por un bug de npm con dependencias opcionales (npm/cli#4828). Después de instalar algo, verificar que `package-lock.json` siga teniendo las entradas `node_modules/@rolldown/binding-*`. Si faltan, regenerarlo borrando `node_modules` y `package-lock.json` y corriendo `npm install`.
 - **Las migraciones se aplican al iniciar la app solo si `RUN_MIGRATIONS=true`.** La variable es obligatoria. Con `true`, iniciar la app contra una base aplica las migraciones sobre esa base.
 - **No apuntar `DATABASE_URL` a la base hosteada** hasta que Cocos confirme que se pueden aplicar migraciones (T0.1).
 - **Credenciales:** la URL de la base hosteada incluye la contraseña y el repo es público. Solo puede estar en `.env`; nunca en código, docs, `.env.example`, colecciones ni mensajes de commit.

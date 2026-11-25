@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class UniqueConstraintsAndIndexes1795996900000 implements MigrationInterface {
   name = 'UniqueConstraintsAndIndexes1795996900000';

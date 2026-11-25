@@ -14,13 +14,13 @@
 
 **Alternativas descartadas:** inyectar el `Repository` de TypeORM directamente en los servicios. Es menos código, pero mezcla las consultas con la lógica de negocio.
 
-## `database.sql` como base y migraciones encima
+## `src/database/seed.sql` como base y migraciones encima
 
-**Decisión:** el esquema y los datos de `database.sql` se mantienen tal cual, y cada cambio se hace con una migración de TypeORM. `synchronize` está desactivado: TypeORM nunca modifica el esquema por su cuenta.
+**Decisión:** `src/database/seed.sql` es el `database.sql` que provee la consigna, movido y renombrado sin cambios. El esquema y sus datos se mantienen tal cual, y cada cambio se hace con una migración de TypeORM. `synchronize` está desactivado: TypeORM nunca modifica el esquema por su cuenta.
 
 **Por qué:** respeta el modelo provisto por Cocos y deja cada cambio versionado, reversible y justificado.
 
-**Alternativas descartadas:** reescribir todo el esquema en migraciones. Duplica `database.sql` y se aleja del modelo provisto.
+**Alternativas descartadas:** reescribir todo el esquema en migraciones. Duplica `src/database/seed.sql` y se aleja del modelo provisto.
 
 ## Columnas obligatorias (NOT NULL)
 
@@ -91,7 +91,7 @@
 **Alternativas descartadas:**
 - Hacer todo el cálculo en Postgres, en la consulta del repositorio o en una función SQL: es exacto sin dependencias, pero deja reglas de negocio en la base.
 - Restar montos con decimales con `number` en el servicio: posibles errores de redondeo.
-- Guardar centavos como enteros: cambia el esquema de `database.sql`.
+- Guardar centavos como enteros: cambia el esquema de `src/database/seed.sql`.
 
 ## Fecha de las órdenes desde el reloj de Postgres
 

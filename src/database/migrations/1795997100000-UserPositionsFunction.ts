@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class UserPositionsFunction1795997100000 implements MigrationInterface {
   name = 'UserPositionsFunction1795997100000';

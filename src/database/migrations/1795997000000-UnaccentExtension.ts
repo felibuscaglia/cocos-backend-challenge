@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner } from 'typeorm';
+import type { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class UnaccentExtension1795997000000 implements MigrationInterface {
   name = 'UnaccentExtension1795997000000';
