@@ -165,7 +165,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Fase 5 — Saldos y portfolio**
 - [x] T5.1 — Cálculo de saldos del usuario
-- [ ] T5.2 — Endpoint `GET /portfolio`
+- [x] T5.2 — Endpoint `GET /portfolio`
 
 **Fase 6 — Búsqueda de activos**
 - [ ] T6.1 — Endpoint `GET /instruments`
@@ -493,36 +493,36 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** devolver el valor total de la cuenta, el efectivo y las posiciones del usuario.
 
 **Subtareas**
-- [ ] Crear el endpoint, que identifica al usuario con `X-User-Id` (T4.2).
-- [ ] Usar la función de posiciones (T3.4) y los saldos (T5.1).
-- [ ] Convertir los `NUMERIC` a `number` sin redondear.
-- [ ] Ordenar `positions` alfabéticamente por ticker.
-- [ ] Documentar en Swagger, en español, con un ejemplo de respuesta.
+- [x] Crear el endpoint, que identifica al usuario con `X-User-Id` (T4.2).
+- [x] Usar la función de posiciones (T3.4) y los saldos (T5.1).
+- [x] Devolver los montos y precios como strings decimales sin redondear, y las cantidades y rendimientos como `number`.
+- [x] Ordenar `positions` alfabéticamente por ticker.
+- [x] Documentar en Swagger, en español, con un ejemplo de respuesta.
 
 **Respuesta esperada** (el rendimiento está abreviado en el ejemplo):
 
 ```json
 {
-  "totalValue": 889756,
-  "availableCash": 627500,
-  "reservedCash": 125500,
+  "totalValue": "889756",
+  "availableCash": "627500",
+  "reservedCash": "125500",
   "positions": [
-    { "ticker": "BMA", "name": "Banco Macro S.A.", "quantity": -10, "latestPrice": 1502.8, "marketValue": -15028, "totalReturn": -0.0241558 },
-    { "ticker": "METR", "name": "MetroGAS S.A.", "quantity": 500, "latestPrice": 229.5, "marketValue": 114750, "totalReturn": -0.082 },
-    { "ticker": "PAMP", "name": "Pampa Holding S.A.", "quantity": 40, "latestPrice": 925.85, "marketValue": 37034, "totalReturn": -0.0044624 }
+    { "ticker": "BMA", "name": "Banco Macro S.A.", "quantity": -10, "latestPrice": "1502.8", "marketValue": "-15028", "totalReturn": -0.0241558 },
+    { "ticker": "METR", "name": "MetroGAS S.A.", "quantity": 500, "latestPrice": "229.5", "marketValue": "114750", "totalReturn": -0.082 },
+    { "ticker": "PAMP", "name": "Pampa Holding S.A.", "quantity": 40, "latestPrice": "925.85", "marketValue": "37034", "totalReturn": -0.0044624 }
   ]
 }
 ```
 
 **Criterios de aceptación**
-- [ ] El usuario 1 recibe los valores de la tabla de referencia.
-- [ ] ARS nunca aparece en `positions`. El efectivo solo figura en `availableCash` y `reservedCash`.
-- [ ] Las posiciones con cantidad 0 no aparecen. La de BMA aparece con cantidad `-10`.
-- [ ] Un usuario sin órdenes recibe `{ "totalValue": 0, "availableCash": 0, "reservedCash": 0, "positions": [] }`.
-- [ ] Un usuario inexistente, o un header inválido o ausente, responde 404.
-- [ ] La respuesta no expone datos sensibles (email, número de cuenta) ni ids internos.
-- [ ] Los números son `number` de JSON, sin redondeo. El rendimiento es una fracción.
-- [ ] `totalValue` es igual a `availableCash` + `reservedCash` + Σ `marketValue`.
+- [x] El usuario 1 recibe los valores de la tabla de referencia.
+- [x] ARS nunca aparece en `positions`. El efectivo solo figura en `availableCash` y `reservedCash`.
+- [x] Las posiciones con cantidad 0 no aparecen. La de BMA aparece con cantidad `-10`.
+- [x] Un usuario sin órdenes recibe `{ "totalValue": "0", "availableCash": "0", "reservedCash": "0", "positions": [] }`.
+- [x] Un usuario inexistente, o un header inválido o ausente, responde 404.
+- [x] La respuesta no expone datos sensibles (email, número de cuenta) ni ids internos.
+- [x] Los montos y precios son strings decimales, sin redondeo. Las cantidades son `number`. El rendimiento es una fracción `number`.
+- [x] `totalValue` es igual a `availableCash` + `reservedCash` + Σ `marketValue`.
 
 ---
 

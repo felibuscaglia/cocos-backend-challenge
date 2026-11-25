@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import Decimal from 'decimal.js';
 import { OrderSide, OrderStatus } from './enums';
-import { CashSummary } from './interfaces';
+import { CashSummary, Position } from './interfaces';
 import { OrdersRepository } from './orders.repository';
 
 @Injectable()
@@ -59,5 +59,9 @@ export class OrdersService {
     ]);
 
     return bought - sold - pendingSales;
+  }
+
+  findPositions(userId: number): Promise<Position[]> {
+    return this.ordersRepository.findPositions(userId);
   }
 }

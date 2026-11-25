@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { OrderSide, OrderStatus } from './enums';
+import { Position } from './interfaces';
 import { Order } from './order.entity';
 
 @Injectable()
@@ -38,5 +39,16 @@ export class OrdersRepository {
       [userId, instrumentId, status, side],
     );
     return Number(total);
+  }
+
+  findPositions(userId: number): Promise<Position[]> {
+    return this.repository.query<Position[]>(
+      `SELECT ticker, name, quantity, ppc,
+              latest_price AS "latestPrice", market_value AS "marketValue",
+              total_return AS "totalReturn"
+       FROM user_positions($1)
+       ORDER BY ticker`,
+      [userId],
+    );
   }
 }

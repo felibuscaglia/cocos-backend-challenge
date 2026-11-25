@@ -44,6 +44,18 @@
 - Rendimiento total del activo incluyendo las ventas: (valor actual + cobrado por ventas − pagado) ÷ pagado. Es más simple de calcular, pero no es el número que muestran los brokers y mezcla ganancias de operaciones viejas con la posición actual.
 - FIFO (las primeras acciones compradas son las primeras vendidas): se usa sobre todo para impuestos y obliga a emparejar compras con ventas una por una.
 
+## Activos sin datos de mercado
+
+**Decisión:** si un activo no tiene filas en `marketdata`, aparece igual en `positions`, con `latestPrice` y `marketValue` en `"0"` y `totalReturn` en `0`.
+
+**Por qué:** el usuario tiene las acciones aunque no haya precio, así que la posición tiene que figurar. Sin precio no se le puede asignar un valor, por eso no suma al valor total. El rendimiento queda en 0 y no en −1 (−100%), que mostraría una pérdida total que no ocurrió.
+
+## Rendimiento sin precio promedio de compra
+
+**Decisión:** si el PPC es 0 o no existe, `totalReturn` es `null`.
+
+**Por qué:** el rendimiento se divide por el PPC, así que sin un costo no se puede calcular. Los brokers muestran "—" en ese caso. Un 0 se leería como "ni ganancia ni pérdida", y eso es falso: por ejemplo, unas acciones recibidas gratis que hoy valen 100 son una ganancia.
+
 ## Posiciones calculadas con una función SQL por usuario
 
 **Decisión:** una función de Postgres recibe el id del usuario y devuelve sus posiciones (cantidad, PPC, último precio, valor de mercado y rendimiento). Procesa solo las órdenes de ese usuario, con aritmética `NUMERIC`.

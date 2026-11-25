@@ -43,13 +43,23 @@
 - RFC 9457 (Problem Details): es estándar, pero suma campos y URIs de tipo que hay que definir.
 - Un formato propio con códigos de error: es una convención más a documentar y mantener.
 
-## Números sin redondeo
+## Montos como strings decimales
 
-**Decisión:** los montos, precios y rendimientos se devuelven como números JSON, sin redondear. Los rendimientos son fracciones (`0.28` = 28%).
+**Decisión:**
+- Los montos y precios (`totalValue`, `availableCash`, `reservedCash`, `latestPrice`, `marketValue`) se devuelven como strings decimales, sin redondear: `"627500"`, `"1502.8"`.
+- Las cantidades de acciones son `number` de JSON, porque son enteros.
+- Los rendimientos son fracciones (`0.28` = 28%) y se devuelven como `number`.
 
-**Por qué:** el backend entrega valores; cómo mostrarlos (decimales, porcentaje) lo decide el cliente.
+**Por qué:**
+- Un `number` de JSON es un float de 64 bits: no representa exactamente muchos decimales (`0.1 + 0.2 = 0.30000000000000004`) y pierde dígitos a partir de los 15-17 significativos. En dinero, un error de un centavo es un error.
+- El string conserva el valor exacto de `NUMERIC`. El cliente lo convierte con una librería decimal y decide cómo mostrarlo.
+- Es la práctica habitual en APIs financieras y de brokers (Alpaca, Coinbase, Binance).
+- Los montos ya viajan como strings dentro del backend (`docs/decisiones/base-de-datos.md`), así que no hace falta convertirlos al responder.
 
-**Alternativas descartadas:** strings con dos decimales. Son exactos, pero obligan al cliente a convertirlos para operar.
+**Alternativas descartadas:**
+- `number` de JSON: es más simple para el cliente, pero puede perder exactitud y llevar al cliente a operar con floats.
+- Enteros en centavos (como Stripe): son exactos, pero no sirven para precios o promedios con más de dos decimales.
+- Strings con dos decimales fijos: redondean, y el backend entrega valores sin decidir cómo se muestran.
 
 ## Documentación con Swagger
 
