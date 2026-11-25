@@ -155,7 +155,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Fase 3 — Migraciones de esquema**
 - [x] T3.1 — Restricciones NOT NULL y CHECK
-- [ ] T3.2 — Unicidad e índices
+- [x] T3.2 — Unicidad e índices
 - [ ] T3.3 — Extensión `unaccent`
 - [ ] T3.4 — Función SQL de posiciones por usuario
 
@@ -375,16 +375,16 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** garantizar unicidad donde la lógica la supone y acelerar las consultas frecuentes.
 
 **Subtareas**
-- [ ] UNIQUE en `instruments.ticker`.
-- [ ] UNIQUE en `marketdata (instrumentid, date)`. Su índice también sirve para buscar el último precio.
-- [ ] Índice en `orders (userid, status, instrumentid)`.
-- [ ] Escribir un `down` que revierta todo.
+- [x] UNIQUE en `instruments.ticker`.
+- [x] UNIQUE en `marketdata (instrumentid, date)`. Su índice también sirve para buscar el último precio.
+- [x] Índice en `orders (userid, status, instrumentid)`.
+- [x] Escribir un `down` que revierta todo.
 
 **Criterios de aceptación**
-- [ ] La migración corre sin errores sobre el seed.
-- [ ] Insertar un ticker repetido, o una segunda fila de `marketdata` para el mismo instrumento y día, falla.
-- [ ] Los índices existen (se ven con `\d orders` y `\d marketdata`).
-- [ ] `npm run migration:revert` deja el esquema como estaba.
+- [x] La migración corre sin errores sobre el seed.
+- [x] Insertar un ticker repetido, o una segunda fila de `marketdata` para el mismo instrumento y día, falla.
+- [x] Los índices existen (se ven con `\d orders` y `\d marketdata`).
+- [x] `npm run migration:revert` deja el esquema como estaba.
 
 ### T3.3 — Extensión `unaccent`
 
