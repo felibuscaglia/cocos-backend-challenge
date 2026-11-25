@@ -184,10 +184,9 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T8.5 — Tests: concurrencia
 
 **Fase 9 — Documentación y cierre**
-- [ ] T9.1 — README
-- [ ] T9.2 — Colección de Postman (recordatorio)
-- [ ] T9.3 — Verificación contra Neon *(condicional)*
-- [ ] T9.4 — Revisión final de la entrega
+- [x] T9.1 — README
+- [x] T9.2 — Colección de Postman (recordatorio)
+- [ ] T9.3 — Revisión final de la entrega
 
 ---
 
@@ -810,57 +809,42 @@ En cada caso se verifican el código HTTP, el formato del error (`statusCode`, `
 **Objetivo:** que cualquier persona pueda levantar, probar y entender el proyecto.
 
 **Subtareas**
-- [ ] Descripción breve del proyecto.
-- [ ] Sección de setup y ejecución:
-  - [ ] Requisitos: Docker Desktop. Node 24 y npm solo para desarrollo local.
-  - [ ] Qué es Docker Compose, en dos líneas.
-  - [ ] `docker compose up`, y cómo volver al seed con `docker compose down -v`.
-  - [ ] Ejecución local con npm contra la base de Docker, con `.env` creado desde `.env.example`.
-  - [ ] Cómo apuntar a otra base (ej. Neon), y el uso de `RUN_MIGRATIONS` para decidir si se aplican las migraciones sobre ella.
-  - [ ] Comandos de migraciones.
-  - [ ] Cómo correr los tests (requiere Docker).
-  - [ ] URL de Swagger (`/api/docs`).
-- [ ] Sección de arquitectura:
-  - [ ] Componentes principales y sus responsabilidades.
-  - [ ] Flujo de una orden: validación, bloqueo del usuario, saldos, reglas, guardado y respuesta.
-  - [ ] Esquema de datos y migraciones, incluida la función de posiciones.
-  - [ ] Cálculo de saldos y del PPC.
-  - [ ] Formato de errores.
-  - [ ] Manejo de concurrencia.
+- [x] Descripción breve del proyecto.
+- [x] Sección de setup y ejecución:
+  - [x] Requisitos: Docker Desktop. Node 24 y npm solo para desarrollo local.
+  - [x] Qué es Docker Compose, en dos líneas.
+  - [x] `docker compose up`, y cómo volver al seed con `docker compose down -v`.
+  - [x] Ejecución local con npm contra la base de Docker, con `.env` creado desde `.env.example`.
+  - [x] Cómo apuntar a otra base (ej. Neon), y el uso de `RUN_MIGRATIONS` para decidir si se aplican las migraciones sobre ella.
+  - [x] Comandos de migraciones.
+  - [x] Cómo correr los tests (requiere Docker).
+  - [x] URL de Swagger (`/api/docs`).
+- [x] Sección de arquitectura:
+  - [x] Componentes principales y sus responsabilidades.
+  - [x] Flujo de una orden: validación, bloqueo del usuario, saldos, reglas, guardado y respuesta.
+  - [x] Esquema de datos y migraciones, incluida la función de posiciones.
+  - [x] Cálculo de saldos y del PPC.
+  - [x] Formato de errores.
+  - [x] Manejo de concurrencia.
 
 **Criterios de aceptación**
-- [ ] Está escrito en español.
-- [ ] Una persona sin contexto puede levantar el proyecto y correr los tests siguiendo solo el README.
-- [ ] No contiene credenciales reales.
+- [x] Está escrito en español.
+- [x] Una persona sin contexto puede levantar el proyecto y correr los tests siguiendo solo el README.
+- [x] No contiene credenciales reales.
 
 ### T9.2 — Colección de Postman (recordatorio)
 
 **Objetivo:** recordar armar la colección de Postman. El alcance se define más adelante.
 
 **Subtareas**
-- [ ] Definir el alcance: endpoints, entorno con `baseUrl` y ejemplos.
-- [ ] Armar y exportar la colección al repo.
+- [x] Definir el alcance: endpoints, entorno con `baseUrl` y ejemplos.
+- [x] Armar y exportar la colección al repo.
 
 **Criterios de aceptación**
 - [ ] La colección cubre todos los endpoints, con descripciones en español.
 - [ ] No contiene credenciales.
 
-### T9.3 — Verificación contra Neon *(condicional)*
-
-**Objetivo:** confirmar que la API funciona contra la base hosteada. Solo se hace si Cocos lo autorizó en T0.1. Genera commit únicamente si hay cambios.
-
-**Subtareas**
-- [ ] Poner la URL de Neon en `.env`, sin commitearla.
-- [ ] Iniciar la app con `RUN_MIGRATIONS=true` y confirmar que las migraciones se aplican sin errores.
-- [ ] Probar portfolio, búsqueda, envío y cancelación de órdenes, teniendo en cuenta que las órdenes de prueba quedan guardadas en Neon.
-- [ ] Confirmar que el bloqueo de concurrencia funciona detrás del pooler de Neon.
-- [ ] Volver `.env` a la base local.
-
-**Criterios de aceptación**
-- [ ] Los endpoints responden igual que contra la base local.
-- [ ] Si Cocos no lo autorizó, la tarea se descarta y el README aclara que el proyecto usa la base local.
-
-### T9.4 — Revisión final de la entrega
+### T9.3 — Revisión final de la entrega
 
 **Objetivo:** verificar el repo como lo vería un evaluador. Genera commit únicamente si hay correcciones.
 

@@ -1,0 +1,2020 @@
+{
+  "info": {
+    "name": "Cocos Backend Challenge",
+    "description": "Colección de la API del Cocos Backend Challenge: portfolio, búsqueda de activos y envío y cancelación de órdenes.\n\n**Uso:** levantar la API con `docker compose up` e importar esta colección. Las variables de la colección son `baseUrl` (por defecto `http://localhost:3000`) y `userId` (por defecto `1`), que se envía en el header `X-User-Id`.\n\nCada request trae un ejemplo de respuesta, obtenido con los datos del seed. Las órdenes que se envían quedan guardadas: para volver al seed, `docker compose down -v` y `docker compose up`.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "General",
+      "item": [
+        {
+          "name": "Información de la API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            },
+            "description": "Nombre, descripción y autor de la API. No requiere header."
+          },
+          "response": [
+            {
+              "name": "Información de la API",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": []
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 200,\n  \"name\": \"Cocos Backend Challenge\",\n  \"description\": \"API REST de portfolio, búsqueda de activos y órdenes.\",\n  \"author\": \"Felipe Buscaglia\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Portfolio",
+      "description": "Valor total de la cuenta, efectivo disponible y reservado, y posiciones del usuario. El usuario se indica con el header `X-User-Id`.",
+      "item": [
+        {
+          "name": "Portfolio del usuario",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/portfolio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            },
+            "description": "Portfolio del usuario de la variable `userId`. Con el seed, el usuario 1 tiene efectivo, órdenes en espera y posiciones en BMA, METR y PAMP.\n\nLos montos y precios son strings decimales; las cantidades y el rendimiento (`totalReturn`, como fracción), `number`."
+          },
+          "response": [
+            {
+              "name": "Portfolio del usuario",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/portfolio",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "portfolio"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"totalValue\": \"889756\",\n  \"availableCash\": \"627500\",\n  \"reservedCash\": \"125500\",\n  \"positions\": [\n    {\n      \"ticker\": \"BMA\",\n      \"name\": \"Banco Macro S.A.\",\n      \"quantity\": -10,\n      \"latestPrice\": \"1502.8\",\n      \"marketValue\": \"-15028\",\n      \"totalReturn\": -0.024155844155844156\n    },\n    {\n      \"ticker\": \"METR\",\n      \"name\": \"MetroGAS S.A.\",\n      \"quantity\": 500,\n      \"latestPrice\": \"229.5\",\n      \"marketValue\": \"114750\",\n      \"totalReturn\": -0.082\n    },\n    {\n      \"ticker\": \"PAMP\",\n      \"name\": \"Pampa Holding S.A.\",\n      \"quantity\": 40,\n      \"latestPrice\": \"925.85\",\n      \"marketValue\": \"37034\",\n      \"totalReturn\": -0.004462365591397849\n    }\n  ]\n}"
+            }
+          ]
+        },
+        {
+          "name": "Usuario sin órdenes",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "2"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/portfolio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            },
+            "description": "Los usuarios 2, 3 y 4 del seed no tienen órdenes: todos los saldos en `\"0\"` y `positions` vacío."
+          },
+          "response": [
+            {
+              "name": "Usuario sin órdenes",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "2"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/portfolio",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "portfolio"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"totalValue\": \"0\",\n  \"availableCash\": \"0\",\n  \"reservedCash\": \"0\",\n  \"positions\": []\n}"
+            }
+          ]
+        },
+        {
+          "name": "Usuario inexistente (404)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "999"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/portfolio",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "portfolio"
+              ]
+            },
+            "description": "Un usuario inexistente, o un header ausente o inválido, responde 404."
+          },
+          "response": [
+            {
+              "name": "Usuario inexistente (404)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "999"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/portfolio",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "portfolio"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 404,\n  \"message\": \"Usuario no encontrado\",\n  \"error\": \"Not Found\",\n  \"path\": \"/portfolio\",\n  \"timestamp\": \"2026-11-25T05:59:57.810Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Instrumentos",
+      "description": "Búsqueda de activos por ticker o nombre, sin distinguir mayúsculas ni acentos, con ranking y paginación. No requiere header.",
+      "item": [
+        {
+          "name": "Buscar por texto",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instruments?q=ga",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instruments"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "ga"
+                }
+              ]
+            },
+            "description": "Busca `q` en el ticker o el nombre. Orden: ticker exacto, ticker que empieza con `q`, nombre que empieza con `q` y el resto; alfabético por ticker dentro de cada grupo."
+          },
+          "response": [
+            {
+              "name": "Buscar por texto",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instruments?q=ga",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instruments"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "ga"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": 11,\n      \"ticker\": \"GAMI\",\n      \"name\": \"Boldt Gaming S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 16,\n      \"ticker\": \"GARO\",\n      \"name\": \"Garovaglio Y Zorraquín\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 36,\n      \"ticker\": \"GBAN\",\n      \"name\": \"Gas Natural Ban S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 37,\n      \"ticker\": \"CGPA2\",\n      \"name\": \"Camuzzi Gas del Sur\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 35,\n      \"ticker\": \"DGCU2\",\n      \"name\": \"Distribuidora De Gas Cuyano S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 34,\n      \"ticker\": \"GGAL\",\n      \"name\": \"Grupo Financiero Galicia\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 54,\n      \"ticker\": \"METR\",\n      \"name\": \"MetroGAS S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 44,\n      \"ticker\": \"TGNO4\",\n      \"name\": \"Transportadora de Gas del Norte\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 48,\n      \"ticker\": \"TGSU2\",\n      \"name\": \"Transportadora de Gas del Sur\",\n      \"type\": \"ACCIONES\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 9,\n    \"totalPages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Buscar sin acentos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instruments?q=compania",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instruments"
+              ],
+              "query": [
+                {
+                  "key": "q",
+                  "value": "compania"
+                }
+              ]
+            },
+            "description": "`compania` encuentra \"Compañía\": la búsqueda ignora acentos."
+          },
+          "response": [
+            {
+              "name": "Buscar sin acentos",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instruments?q=compania",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instruments"
+                  ],
+                  "query": [
+                    {
+                      "key": "q",
+                      "value": "compania"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": 13,\n      \"ticker\": \"INTR\",\n      \"name\": \"Compañía Introductora de Buenos Aires S.A.\",\n      \"type\": \"ACCIONES\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 1,\n    \"totalPages\": 1\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Listar todos, paginado",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instruments?page=1&limit=20",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instruments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "20"
+                }
+              ]
+            },
+            "description": "Sin `q`, devuelve todos los instrumentos ordenados por ticker. `page` y `limit` son enteros ≥ 1, por defecto 1 y 20."
+          },
+          "response": [
+            {
+              "name": "Listar todos, paginado",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instruments?page=1&limit=20",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instruments"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "20"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"data\": [\n    {\n      \"id\": 26,\n      \"ticker\": \"AGRO\",\n      \"name\": \"Agrometal\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 61,\n      \"ticker\": \"ALUA\",\n      \"name\": \"Aluar Aluminio Argentino S.A.I.C.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 66,\n      \"ticker\": \"ARS\",\n      \"name\": \"PESOS\",\n      \"type\": \"MONEDA\"\n    },\n    {\n      \"id\": 27,\n      \"ticker\": \"AUSO\",\n      \"name\": \"Autopistas del Sol\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 22,\n      \"ticker\": \"BBAR\",\n      \"name\": \"Banco Frances\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 28,\n      \"ticker\": \"BHIP\",\n      \"name\": \"Banco Hipotecario S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 31,\n      \"ticker\": \"BMA\",\n      \"name\": \"Banco Macro S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 29,\n      \"ticker\": \"BOLT\",\n      \"name\": \"Boldt S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 19,\n      \"ticker\": \"BPAT\",\n      \"name\": \"Banco Patagonia\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 65,\n      \"ticker\": \"BYMA\",\n      \"name\": \"Bolsas y Mercados Argentinos S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 38,\n      \"ticker\": \"CADO\",\n      \"name\": \"Carlos Casado\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 2,\n      \"ticker\": \"CAPX\",\n      \"name\": \"Capex S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 30,\n      \"ticker\": \"CARC\",\n      \"name\": \"Carboclor S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 25,\n      \"ticker\": \"CECO2\",\n      \"name\": \"Central Costanera\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 24,\n      \"ticker\": \"CELU\",\n      \"name\": \"Celulosa Argentina S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 60,\n      \"ticker\": \"CEPU\",\n      \"name\": \"Central Puerto\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 37,\n      \"ticker\": \"CGPA2\",\n      \"name\": \"Camuzzi Gas del Sur\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 59,\n      \"ticker\": \"COME\",\n      \"name\": \"Sociedad Comercial Del Plata\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 32,\n      \"ticker\": \"CRES\",\n      \"name\": \"Cresud S.A.\",\n      \"type\": \"ACCIONES\"\n    },\n    {\n      \"id\": 62,\n      \"ticker\": \"CTIO\",\n      \"name\": \"Consultatio S.A.\",\n      \"type\": \"ACCIONES\"\n    }\n  ],\n  \"meta\": {\n    \"page\": 1,\n    \"limit\": 20,\n    \"total\": 66,\n    \"totalPages\": 4\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Paginación inválida (400)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/instruments?page=0",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "instruments"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "0"
+                }
+              ]
+            },
+            "description": "`page` o `limit` en 0, negativos, decimales o texto responden 400."
+          },
+          "response": [
+            {
+              "name": "Paginación inválida (400)",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/instruments?page=0",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "instruments"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "0"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": [\n    \"page debe ser mayor o igual a 1\"\n  ],\n  \"error\": \"Bad Request\",\n  \"path\": \"/instruments?page=0\",\n  \"timestamp\": \"2026-11-25T05:59:58.393Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Órdenes",
+      "description": "Envío de órdenes con `POST /orders`. El usuario se indica con el header `X-User-Id`.\n\n- **MARKET:** se ejecuta (`FILLED`) al último precio de cierre. Si el body trae `price`, se ignora.\n- **LIMIT:** queda en espera (`NEW`) al precio límite y reserva el efectivo o las acciones.\n- **Por monto:** con `amount` en lugar de `size`, se calcula `size = floor(amount ÷ precio)`.\n- **CASH_IN / CASH_OUT:** depósito y extracción de pesos, con `ticker: \"ARS\"`, `type: \"MARKET\"` y `amount` entero.\n\n`amount` y `price` se envían como texto decimal.",
+      "item": [
+        {
+          "name": "MARKET BUY por cantidad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Compra 10 acciones de PAMP al último cierre."
+          },
+          "response": [
+            {
+              "name": "MARKET BUY por cantidad",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"PAMP\",\n  \"size\": 10,\n  \"price\": \"925.85\",\n  \"type\": \"MARKET\",\n  \"side\": \"BUY\",\n  \"status\": \"FILLED\",\n  \"datetime\": \"2026-11-25T05:59:58.549Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "MARKET BUY por monto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"amount\": \"50000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Compra la máxima cantidad de acciones enteras de PAMP que entran en 50000 pesos."
+          },
+          "response": [
+            {
+              "name": "MARKET BUY por monto",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"amount\": \"50000\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"PAMP\",\n  \"size\": 54,\n  \"price\": \"925.85\",\n  \"type\": \"MARKET\",\n  \"side\": \"BUY\",\n  \"status\": \"FILLED\",\n  \"datetime\": \"2026-11-25T05:59:58.697Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "MARKET SELL por cantidad",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"SELL\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Vende 10 acciones de PAMP al último cierre."
+          },
+          "response": [
+            {
+              "name": "MARKET SELL por cantidad",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"SELL\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"PAMP\",\n  \"size\": 10,\n  \"price\": \"925.85\",\n  \"type\": \"MARKET\",\n  \"side\": \"SELL\",\n  \"status\": \"FILLED\",\n  \"datetime\": \"2026-11-25T05:59:58.840Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "LIMIT BUY",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"size\": 10,\n  \"price\": \"900\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Queda en espera (`NEW`) a 900 y reserva 9000 pesos hasta que se cancele."
+          },
+          "response": [
+            {
+              "name": "LIMIT BUY",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"size\": 10,\n  \"price\": \"900\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"PAMP\",\n  \"size\": 10,\n  \"price\": \"900\",\n  \"type\": \"LIMIT\",\n  \"side\": \"BUY\",\n  \"status\": \"NEW\",\n  \"datetime\": \"2026-11-25T05:59:58.987Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "LIMIT SELL",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"SELL\",\n  \"type\": \"LIMIT\",\n  \"size\": 10,\n  \"price\": \"1000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Queda en espera (`NEW`) a 1000 y reserva 10 acciones de PAMP hasta que se cancele."
+          },
+          "response": [
+            {
+              "name": "LIMIT SELL",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"SELL\",\n  \"type\": \"LIMIT\",\n  \"size\": 10,\n  \"price\": \"1000\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"PAMP\",\n  \"size\": 10,\n  \"price\": \"1000\",\n  \"type\": \"LIMIT\",\n  \"side\": \"SELL\",\n  \"status\": \"NEW\",\n  \"datetime\": \"2026-11-25T05:59:59.120Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "CASH_IN",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"ARS\",\n  \"side\": \"CASH_IN\",\n  \"type\": \"MARKET\",\n  \"amount\": \"10000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Deposita 10000 pesos. Se guarda con `size` igual al monto y `price` 1."
+          },
+          "response": [
+            {
+              "name": "CASH_IN",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"ARS\",\n  \"side\": \"CASH_IN\",\n  \"type\": \"MARKET\",\n  \"amount\": \"10000\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"ARS\",\n  \"size\": 10000,\n  \"price\": \"1\",\n  \"type\": \"MARKET\",\n  \"side\": \"CASH_IN\",\n  \"status\": \"FILLED\",\n  \"datetime\": \"2026-11-25T05:59:59.258Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "CASH_OUT",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"ARS\",\n  \"side\": \"CASH_OUT\",\n  \"type\": \"MARKET\",\n  \"amount\": \"10000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Extrae 10000 pesos. Se valida contra el efectivo disponible."
+          },
+          "response": [
+            {
+              "name": "CASH_OUT",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"ARS\",\n  \"side\": \"CASH_OUT\",\n  \"type\": \"MARKET\",\n  \"amount\": \"10000\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"ARS\",\n  \"size\": 10000,\n  \"price\": \"1\",\n  \"type\": \"MARKET\",\n  \"side\": \"CASH_OUT\",\n  \"status\": \"FILLED\",\n  \"datetime\": \"2026-11-25T05:59:59.402Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Órdenes rechazadas",
+      "description": "Pedidos válidos que no se pueden ejecutar. Responden 201: la orden se guarda con `status: \"REJECTED\"` y el motivo va en `rejection: { code, message }`. Si incumple varias reglas, se informa la de mayor prioridad: `NO_MARKET_DATA` → `AMOUNT_TOO_LOW` → `INSUFFICIENT_FUNDS` / `INSUFFICIENT_SHARES`.\n\nLos ejemplos usan los saldos del usuario 1 del seed.",
+      "item": [
+        {
+          "name": "Fondos insuficientes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"METR\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 3000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "3000 METR cuestan 688500: más que el efectivo disponible del usuario 1 (627500), aunque menos que su efectivo total, por las órdenes en espera."
+          },
+          "response": [
+            {
+              "name": "Fondos insuficientes",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"METR\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 3000\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"METR\",\n  \"size\": 3000,\n  \"price\": \"229.50\",\n  \"type\": \"MARKET\",\n  \"side\": \"BUY\",\n  \"status\": \"REJECTED\",\n  \"datetime\": \"2026-11-25T05:59:59.566Z\",\n  \"rejection\": {\n    \"code\": \"INSUFFICIENT_FUNDS\",\n    \"message\": \"El efectivo disponible no alcanza para la orden\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Acciones insuficientes",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"SELL\",\n  \"type\": \"MARKET\",\n  \"size\": 41\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "El usuario 1 tiene 40 acciones de PAMP."
+          },
+          "response": [
+            {
+              "name": "Acciones insuficientes",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"SELL\",\n  \"type\": \"MARKET\",\n  \"size\": 41\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"PAMP\",\n  \"size\": 41,\n  \"price\": \"925.85\",\n  \"type\": \"MARKET\",\n  \"side\": \"SELL\",\n  \"status\": \"REJECTED\",\n  \"datetime\": \"2026-11-25T05:59:59.714Z\",\n  \"rejection\": {\n    \"code\": \"INSUFFICIENT_SHARES\",\n    \"message\": \"Las acciones disponibles no alcanzan para la orden\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Sin datos de mercado",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PGR\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "PGR e IRCP no tienen datos de mercado. En MARKET se guarda `price` 0."
+          },
+          "response": [
+            {
+              "name": "Sin datos de mercado",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PGR\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 1\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"PGR\",\n  \"size\": 1,\n  \"price\": \"0\",\n  \"type\": \"MARKET\",\n  \"side\": \"BUY\",\n  \"status\": \"REJECTED\",\n  \"datetime\": \"2026-11-25T05:59:59.855Z\",\n  \"rejection\": {\n    \"code\": \"NO_MARKET_DATA\",\n    \"message\": \"El instrumento no tiene datos de mercado\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "Monto insuficiente",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"amount\": \"500\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "500 pesos no alcanzan para una acción de PAMP. Se guarda con `size` 0."
+          },
+          "response": [
+            {
+              "name": "Monto insuficiente",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"amount\": \"500\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"PAMP\",\n  \"size\": 0,\n  \"price\": \"925.85\",\n  \"type\": \"MARKET\",\n  \"side\": \"BUY\",\n  \"status\": \"REJECTED\",\n  \"datetime\": \"2026-11-25T06:00:00.002Z\",\n  \"rejection\": {\n    \"code\": \"AMOUNT_TOO_LOW\",\n    \"message\": \"El monto no alcanza para comprar o vender una acción\"\n  }\n}"
+            }
+          ]
+        },
+        {
+          "name": "CASH_OUT sin fondos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"ARS\",\n  \"side\": \"CASH_OUT\",\n  \"type\": \"MARKET\",\n  \"amount\": \"700000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Supera el efectivo disponible del usuario 1 (627500)."
+          },
+          "response": [
+            {
+              "name": "CASH_OUT sin fondos",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"ARS\",\n  \"side\": \"CASH_OUT\",\n  \"type\": \"MARKET\",\n  \"amount\": \"700000\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Created",
+              "code": 201,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 12,\n  \"ticker\": \"ARS\",\n  \"size\": 700000,\n  \"price\": \"1\",\n  \"type\": \"MARKET\",\n  \"side\": \"CASH_OUT\",\n  \"status\": \"REJECTED\",\n  \"datetime\": \"2026-11-25T06:00:00.148Z\",\n  \"rejection\": {\n    \"code\": \"INSUFFICIENT_FUNDS\",\n    \"message\": \"El efectivo disponible no alcanza para la orden\"\n  }\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Órdenes con error",
+      "description": "Pedidos inválidos (400) o que apuntan a algo inexistente (404). No se guarda ninguna orden. Orden de validación: header `X-User-Id` → body → ticker → reglas del instrumento.",
+      "item": [
+        {
+          "name": "Sin header X-User-Id (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Sin header, o con un usuario inexistente, responde 404. El header se valida antes que el body."
+          },
+          "response": [
+            {
+              "name": "Sin header X-User-Id (404)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 404,\n  \"message\": \"Usuario no encontrado\",\n  \"error\": \"Not Found\",\n  \"path\": \"/orders\",\n  \"timestamp\": \"2026-11-25T06:00:00.285Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Ticker inexistente (404)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"pamp\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "El ticker debe coincidir exactamente, mayúsculas incluidas."
+          },
+          "response": [
+            {
+              "name": "Ticker inexistente (404)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"pamp\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 404,\n  \"message\": \"Instrumento no encontrado\",\n  \"error\": \"Not Found\",\n  \"path\": \"/orders\",\n  \"timestamp\": \"2026-11-25T06:00:00.424Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "size y amount juntos (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10,\n  \"amount\": \"50000\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "BUY y SELL llevan `size` o `amount`, exactamente uno."
+          },
+          "response": [
+            {
+              "name": "size y amount juntos (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10,\n  \"amount\": \"50000\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": [\n    \"Se debe enviar size o amount, pero no ambos\"\n  ],\n  \"error\": \"Bad Request\",\n  \"path\": \"/orders\",\n  \"timestamp\": \"2026-11-25T06:00:00.570Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "LIMIT sin price (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"size\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "`price` es obligatorio en LIMIT: mayor a 0 y con hasta 2 decimales."
+          },
+          "response": [
+            {
+              "name": "LIMIT sin price (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"PAMP\",\n  \"side\": \"BUY\",\n  \"type\": \"LIMIT\",\n  \"size\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": [\n    \"price debe ser un número decimal mayor a 0, con hasta 2 decimales\",\n    \"price es obligatorio en órdenes LIMIT y debe ser un texto\"\n  ],\n  \"error\": \"Bad Request\",\n  \"path\": \"/orders\",\n  \"timestamp\": \"2026-11-25T06:00:00.717Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "BUY sobre ARS (400)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "X-User-Id",
+                "value": "{{userId}}"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/orders",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"ticker\": \"ARS\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Los pesos no se compran ni venden: se mueven con CASH_IN y CASH_OUT."
+          },
+          "response": [
+            {
+              "name": "BUY sobre ARS (400)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "X-User-Id",
+                    "value": "{{userId}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{baseUrl}}/orders",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders"
+                  ]
+                },
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"ticker\": \"ARS\",\n  \"side\": \"BUY\",\n  \"type\": \"MARKET\",\n  \"size\": 10\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 400,\n  \"message\": \"Solo se pueden comprar o vender instrumentos de tipo ACCIONES\",\n  \"error\": \"Bad Request\",\n  \"path\": \"/orders\",\n  \"timestamp\": \"2026-11-25T06:00:00.861Z\"\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Cancelación",
+      "description": "Cancelación con `POST /orders/:orderId/cancel`. Solo se cancelan órdenes `NEW`, y libera el efectivo o las acciones reservadas. No requiere header.",
+      "item": [
+        {
+          "name": "Cancelar orden NEW",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/5/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "5",
+                "cancel"
+              ]
+            },
+            "description": "La orden 5 del seed es una LIMIT BUY de 50 LOMA en espera. Cancelarla libera 35500 pesos del usuario 1. Funciona una sola vez: después responde 409 (para repetirla, volver al seed con `docker compose down -v`)."
+          },
+          "response": [
+            {
+              "name": "Cancelar orden NEW",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/5/cancel",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "5",
+                    "cancel"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"id\": 5,\n  \"instrumentId\": 45,\n  \"userId\": 1,\n  \"size\": 50,\n  \"price\": \"710.00\",\n  \"type\": \"LIMIT\",\n  \"side\": \"BUY\",\n  \"status\": \"CANCELLED\",\n  \"datetime\": \"2023-07-12T18:14:20.000Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Orden que no está NEW (409)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/2/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "2",
+                "cancel"
+              ]
+            },
+            "description": "La orden 2 del seed está `FILLED`. Una orden en cualquier estado distinto de `NEW` responde 409."
+          },
+          "response": [
+            {
+              "name": "Orden que no está NEW (409)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/2/cancel",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "2",
+                    "cancel"
+                  ]
+                }
+              },
+              "status": "Conflict",
+              "code": 409,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 409,\n  \"message\": \"Solo se pueden cancelar órdenes NEW. La orden tiene estado FILLED\",\n  \"error\": \"Conflict\",\n  \"path\": \"/orders/2/cancel\",\n  \"timestamp\": \"2026-11-25T06:00:01.149Z\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "Orden inexistente (404)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/orders/999/cancel",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "orders",
+                "999",
+                "cancel"
+              ]
+            },
+            "description": "Un `orderId` inexistente o no numérico responde 404."
+          },
+          "response": [
+            {
+              "name": "Orden inexistente (404)",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "url": {
+                  "raw": "{{baseUrl}}/orders/999/cancel",
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "path": [
+                    "orders",
+                    "999",
+                    "cancel"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json; charset=utf-8"
+                }
+              ],
+              "body": "{\n  \"statusCode\": 404,\n  \"message\": \"Orden no encontrada\",\n  \"error\": \"Not Found\",\n  \"path\": \"/orders/999/cancel\",\n  \"timestamp\": \"2026-11-25T06:00:01.272Z\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "userId",
+      "value": "1",
+      "type": "string"
+    }
+  ]
+}
