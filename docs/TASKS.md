@@ -173,7 +173,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T7.2 — Órdenes LIMIT
 - [x] T7.3 — Órdenes por monto en pesos
 - [x] T7.4 — Transferencias CASH_IN / CASH_OUT
-- [ ] T7.5 — Control de concurrencia
+- [x] T7.5 — Control de concurrencia
 - [ ] T7.6 — Cancelación de órdenes
 
 **Fase 8 — Tests funcionales del envío de órdenes**
@@ -580,7 +580,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
   - [x] Si pasa todas las reglas → `FILLED`.
 - [x] Crear el mapa código → mensaje en español para los rechazos.
 - [x] Responder 201 con el formato de respuesta de referencia.
-- [ ] Documentar en Swagger con ejemplos `FILLED` y `REJECTED`.
+- [x] Documentar en Swagger con ejemplos `FILLED` y `REJECTED`.
 
 **Criterios de aceptación**
 - [x] Usuario 1, MARKET BUY 10 PAMP → 201 `FILLED` con `price` `925.85`. En una base recién creada, la nueva fila tiene id 12.
@@ -589,7 +589,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] Usuario 1, MARKET SELL 41 PAMP → `REJECTED` con `INSUFFICIENT_SHARES`.
 - [x] MARKET BUY 1 PGR → `REJECTED` con `NO_MARKET_DATA` y `price` `0`.
 - [x] `ticker: "pamp"` → 404. BUY con `ticker: "ARS"` → 400.
-- [ ] La respuesta no incluye `userId` ni `instrumentId`. `rejection` es `null` salvo en `REJECTED`.
+- [x] La respuesta no incluye `userId` ni `instrumentId`. `rejection` es `null` salvo en `REJECTED`.
 - [x] Después de una orden `FILLED`, el portfolio la refleja.
 
 ### T7.2 — Órdenes LIMIT
@@ -658,15 +658,15 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** que dos órdenes simultáneas del mismo usuario no puedan gastar el mismo dinero ni vender las mismas acciones.
 
 **Subtareas**
-- [ ] Ejecutar todo el envío de una orden (saldos, validaciones de negocio e insert) dentro de una transacción.
-- [ ] Al comienzo de la transacción, bloquear la fila del usuario con `SELECT ... FOR UPDATE` (en TypeORM, lock `pessimistic_write`).
-- [ ] Aplicarlo a todas las órdenes que envía el endpoint.
+- [x] Ejecutar todo el envío de una orden (saldos, validaciones de negocio e insert) dentro de una transacción.
+- [x] Al comienzo de la transacción, bloquear la fila del usuario con `SELECT ... FOR UPDATE` (en TypeORM, lock `pessimistic_write`).
+- [x] Aplicarlo a todas las órdenes que envía el endpoint.
 
 **Criterios de aceptación**
-- [ ] Usuario 1, dos MARKET BUY simultáneas de 2000 METR (`459000` cada una, juntas superan `627500`) → una `FILLED` y otra `REJECTED` con `INSUFFICIENT_FUNDS`.
-- [ ] Usuario 1, dos MARKET SELL simultáneas de 30 PAMP (tiene 40) → una `FILLED` y otra `REJECTED` con `INSUFFICIENT_SHARES`.
-- [ ] Las órdenes simultáneas de usuarios distintos no se bloquean entre sí.
-- [ ] Si algo falla a mitad de camino, no queda ninguna orden guardada a medias.
+- [x] Usuario 1, dos MARKET BUY simultáneas de 2000 METR (`459000` cada una, juntas superan `627500`) → una `FILLED` y otra `REJECTED` con `INSUFFICIENT_FUNDS`.
+- [x] Usuario 1, dos MARKET SELL simultáneas de 30 PAMP (tiene 40) → una `FILLED` y otra `REJECTED` con `INSUFFICIENT_SHARES`.
+- [x] Las órdenes simultáneas de usuarios distintos no se bloquean entre sí.
+- [x] Si algo falla a mitad de camino, no queda ninguna orden guardada a medias.
 
 ### T7.6 — Cancelación de órdenes
 

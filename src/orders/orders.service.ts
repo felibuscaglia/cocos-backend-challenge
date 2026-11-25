@@ -4,22 +4,27 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import Decimal from 'decimal.js';
+import { Transactional } from 'typeorm-transactional';
 import { InstrumentType } from '../instruments/enums';
 import { InstrumentsRepository } from '../instruments/instruments.repository';
 import { User } from '../users/user.entity';
+import { UsersRepository } from '../users/users.repository';
 import { CreatedOrderDto, CreateOrderDto } from './dto';
 import { OrderSide, OrderStatus, OrderType } from './enums';
 import { CashSummary, Position } from './interfaces';
 import { REJECTION_MESSAGES } from './lib/constants';
 import { OrdersRepository } from './orders.repository';
+import { isTrade } from './lib/helpers';
 
 @Injectable()
 export class OrdersService {
   constructor(
     private readonly ordersRepository: OrdersRepository,
     private readonly instrumentsRepository: InstrumentsRepository,
+    private readonly usersRepository: UsersRepository,
   ) {}
 
+  @Transactional()
   async createOrder(
     user: User,
     { ticker, side, type, size, amount, price }: CreateOrderDto,
@@ -31,24 +36,28 @@ export class OrdersService {
     }
 
     const { instrument, latestClose } = result;
-    const isTrade = side === OrderSide.BUY || side === OrderSide.SELL;
+    const _isTrade = isTrade(side);
 
-    if (isTrade && instrument.type !== InstrumentType.ACCIONES) {
+    if (_isTrade && instrument.type !== InstrumentType.ACCIONES) {
       throw new BadRequestException(
         'Solo se pueden comprar o vender instrumentos de tipo ACCIONES',
       );
     }
 
+    // Serializa las órdenes del mismo usuario: una segunda orden espera a que termine
+    // la primera y lee los saldos ya actualizados. Los pedidos inválidos (400/404) no bloquean.
+    await this.usersRepository.lockById(user.id);
+
     // Las transferencias van a precio 1 porque el efectivo se calcula como size × price.
     // El DTO exige price en LIMIT.
-    const orderPrice = !isTrade
+    const orderPrice = !_isTrade
       ? '1'
       : type === OrderType.MARKET
         ? (latestClose ?? '0')
         : price!;
     // El DTO exige size o amount en BUY/SELL, y amount entero en las transferencias.
     // Sin precio (MARKET sin datos de mercado) la cantidad no se puede calcular y queda en 0.
-    const orderSize = !isTrade
+    const orderSize = !_isTrade
       ? Number(amount!)
       : amount !== undefined
         ? new Decimal(orderPrice).isZero()
@@ -57,7 +66,7 @@ export class OrdersService {
         : size!;
     let rejection: CreatedOrderDto['rejection'];
 
-    if (isTrade && latestClose === null) {
+    if (_isTrade && latestClose === null) {
       rejection = {
         code: 'NO_MARKET_DATA',
         message: REJECTION_MESSAGES.NO_MARKET_DATA,
@@ -92,7 +101,7 @@ export class OrdersService {
 
     const status = rejection
       ? OrderStatus.REJECTED
-      : isTrade && type === OrderType.LIMIT
+      : _isTrade && type === OrderType.LIMIT
         ? OrderStatus.NEW
         : OrderStatus.FILLED;
 
