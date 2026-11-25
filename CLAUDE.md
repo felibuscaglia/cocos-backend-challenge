@@ -17,6 +17,8 @@ Challenge técnico de backend para Cocos Capital: una API REST en NestJS 11 + Ty
 
 - **Respuestas lo más concisas y simples posible.** Ir directo al punto, sin repetir contexto ni agregar secciones o detalles que no se pidieron. Usar tablas o listas solo si hacen la respuesta más corta.
 - **Hacer exactamente lo pedido, sobre el estado actual del código y la base.** No leer tareas futuras de `docs/TASKS.md` para anticipar decisiones ni agregar lo que esas tareas piden.
+- **Solo leer de `docs/TASKS.md` la tarea que el usuario indique como actual.** Aunque un pedido coincida con una tarea futura, no abrirla: trabajar solo con el pedido y `docs/decisiones/`.
+- **Antes de escribir código, listar los detalles que no estén en el pedido ni en `docs/decisiones/`** (casos borde, estilo de implementación) y preguntar por ellos.
 - **El usuario toma todas las decisiones técnicas y desarrolla cada tarea.** No implementar tareas de `docs/TASKS.md`, ni ampliar el alcance de un pedido, sin que lo pida explícitamente.
 - **Ante cualquier duda, preguntar antes de decidir.** Esto aplica cuando algo no está definido en `docs/`, cuando es ambiguo o cuando dos documentos se contradicen. Al preguntar:
   - Presentar las opciones con pros y contras.

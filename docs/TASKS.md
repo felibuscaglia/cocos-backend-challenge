@@ -157,7 +157,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T3.1 — Restricciones NOT NULL y CHECK
 - [x] T3.2 — Unicidad e índices
 - [x] T3.3 — Extensión `unaccent`
-- [ ] T3.4 — Función SQL de posiciones por usuario
+- [x] T3.4 — Función SQL de posiciones por usuario
 
 **Fase 4 — Piezas transversales**
 - [ ] T4.1 — Filtro global de excepciones
@@ -403,20 +403,19 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** calcular en Postgres las posiciones de un usuario, incluido el PPC, procesando solo sus órdenes.
 
 **Subtareas**
-- [ ] Crear una función que reciba el id del usuario (ej. `user_positions(p_user_id)`) y devuelva una fila por instrumento con: id, ticker y nombre del instrumento, cantidad, PPC, último precio, valor de mercado y rendimiento total.
-- [ ] Usar solo órdenes `FILLED` con `side` BUY o SELL (las de efectivo quedan afuera).
-- [ ] Implementar el algoritmo del PPC recorriendo las órdenes por `datetime` y `id`.
-- [ ] Tomar como último precio el `close` de la fila con la `date` más reciente del instrumento.
-- [ ] Hacer todo el cálculo con `NUMERIC`.
-- [ ] Excluir posiciones con cantidad 0 y mantener las negativas.
-- [ ] Escribir un `down` que elimine la función.
+- [x] Crear una función que reciba el id del usuario (ej. `user_positions(p_user_id)`) y devuelva una fila por instrumento con: id, ticker y nombre del instrumento, cantidad, PPC, último precio, valor de mercado y rendimiento total.
+- [x] Usar solo órdenes `FILLED` con `side` BUY o SELL (las de efectivo quedan afuera).
+- [x] Implementar el algoritmo del PPC recorriendo las órdenes por `datetime` y `id`.
+- [x] Tomar como último precio el `close` de la fila con la `date` más reciente del instrumento.
+- [x] Hacer todo el cálculo con `NUMERIC`.
+- [x] Excluir posiciones con cantidad 0 y mantener las negativas.
+- [x] Escribir un `down` que elimine la función.
 
 **Criterios de aceptación**
-- [ ] Para el usuario 1 devuelve exactamente PAMP, METR y BMA, con los valores de la tabla de referencia.
-- [ ] Para los usuarios 2, 3 y 4 no devuelve filas.
-- [ ] Con datos de prueba (dentro de una transacción que después se revierte): compra 10 a 100, venta de 5, compra 5 a 200 → PPC `150`.
-- [ ] Una posición vendida por completo no aparece. Si después se vuelve a comprar, el PPC es el precio de la nueva compra.
-- [ ] `npm run migration:revert` elimina la función.
+- [x] Para el usuario 1 devuelve exactamente PAMP, METR y BMA, con los valores de la tabla de referencia.
+- [x] Para los usuarios 2, 3 y 4 no devuelve filas.
+- [x] Una posición vendida por completo no aparece. Si después se vuelve a comprar, el PPC es el precio de la nueva compra.
+- [x] `npm run migration:revert` elimina la función.
 
 ---
 
