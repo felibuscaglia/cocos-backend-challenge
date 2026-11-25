@@ -26,6 +26,7 @@ Challenge técnico de backend para Cocos Capital: una API REST en NestJS 11 + Ty
   - Recomendar una opción solo si el usuario lo pide.
 - Si una decisión ya tomada parece tener un problema, señalarlo con el motivo, sin cambiarla por cuenta propia.
 - Si el usuario cambia una decisión, proponer la actualización de `docs/decisiones/` y `docs/TASKS.md` para que sigan alineados.
+- Al completar trabajo de una tarea de `docs/TASKS.md`, marcar en ese archivo las subtareas terminadas y, si quedan todas completas, la tarea en el índice. No marcar los criterios de aceptación.
 - Commits: un commit por tarea, directo a `main`, y solo cuando el usuario lo pida.
 
 ## Documentación

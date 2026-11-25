@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Joi from 'joi';
 import { AppController } from './app.controller';
+import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { typeOrmOptions } from './database/typeorm-options';
 
 @Module({
@@ -26,6 +28,6 @@ import { typeOrmOptions } from './database/typeorm-options';
     }),
   ],
   controllers: [AppController],
-  providers: [],
+  providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
 })
 export class AppModule {}

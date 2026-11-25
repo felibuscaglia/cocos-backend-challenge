@@ -160,7 +160,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T3.4 — Función SQL de posiciones por usuario
 
 **Fase 4 — Piezas transversales**
-- [ ] T4.1 — Filtro global de excepciones
+- [x] T4.1 — Filtro global de excepciones
 - [ ] T4.2 — Identificación del usuario por header `X-User-Id`
 
 **Fase 5 — Saldos y portfolio**
@@ -426,20 +426,20 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** que todos los errores tengan el mismo formato, sin exponer detalles internos.
 
 **Subtareas**
-- [ ] Crear un filtro global que responda siempre con `statusCode`, `message`, `error`, `path` y `timestamp`.
-- [ ] `message` va en español: un texto, o una lista de textos en los errores de validación.
-- [ ] `error` lleva el nombre HTTP estándar en inglés (`Bad Request`, `Not Found`, `Conflict`, `Internal Server Error`).
-- [ ] Mapear errores de Postgres:
-  - [ ] `23503` (clave foránea) → 404.
-  - [ ] `23505` (valor duplicado) → 409.
-  - [ ] `22P02` (formato inválido) → 400.
-  - [ ] `23514` (CHECK) → 400.
-  - [ ] `23502` (NOT NULL) → 400.
-- [ ] Cualquier otro error responde 500 con un mensaje genérico en español, sin SQL ni stack. El detalle se registra con el `Logger`.
-- [ ] Documentar el formato de error en Swagger.
+- [x] Crear un filtro global que responda siempre con `statusCode`, `message`, `error`, `path` y `timestamp`.
+- [x] `message` va en español: un texto, o una lista de textos en los errores de validación.
+- [x] `error` lleva el nombre HTTP estándar en inglés (`Bad Request`, `Not Found`, `Conflict`, `Internal Server Error`).
+- [x] Mapear errores de Postgres:
+  - [x] `23503` (clave foránea) → 404.
+  - [x] `23505` (valor duplicado) → 409.
+  - [x] `22P02` (formato inválido) → 400.
+  - [x] `23514` (CHECK) → 400.
+  - [x] `23502` (NOT NULL) → 400.
+- [x] Cualquier otro error responde 500 con un mensaje genérico en español, sin SQL ni stack. El detalle se registra con el `Logger`.
+- [x] Documentar el formato de error en Swagger.
 
 **Criterios de aceptación**
-- [ ] Un error tiene esta forma:
+- [x] Un error tiene esta forma:
   ```json
   {
     "statusCode": 404,
@@ -449,8 +449,8 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
     "timestamp": "2026-11-23T14:00:00.000Z"
   }
   ```
-- [ ] Los errores de validación de T0.4 salen con el mismo formato.
-- [ ] Un error de base no mapeado devuelve 500 sin detalles internos y queda registrado en el log.
+- [x] Los errores de validación de T0.4 salen con el mismo formato.
+- [x] Un error de base no mapeado devuelve 500 sin detalles internos y queda registrado en el log.
 
 ### T4.2 — Identificación del usuario por header `X-User-Id`
 

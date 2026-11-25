@@ -1,5 +1,11 @@
 import { Controller, Get, HttpStatus } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiInternalServerErrorResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { ErrorResponseDto } from './common/dto';
 
 @ApiTags('General')
 @Controller()
@@ -10,6 +16,17 @@ export class AppController {
   @ApiOperation({ summary: 'Información básica de la API' })
   @ApiOkResponse({
     description: 'Nombre, descripción y autor de la API.',
+  })
+  @ApiInternalServerErrorResponse({
+    description: 'Error inesperado del servidor.',
+    type: ErrorResponseDto,
+    example: {
+      statusCode: 500,
+      message: 'Error interno del servidor',
+      error: 'Internal Server Error',
+      path: '/',
+      timestamp: '2026-11-24T15:30:00.000Z',
+    },
   })
   getInfo() {
     return {

@@ -53,7 +53,7 @@
 
 ## Documentación con Swagger
 
-**Decisión:** la especificación OpenAPI se genera con `@nestjs/swagger`, con la UI en `/api/docs` y los textos en español.
+**Decisión:** la especificación OpenAPI se genera con `@nestjs/swagger`, con la UI en `/docs` y los textos en español.
 
 **Por qué:** la documentación sale del propio código y permite probar los endpoints desde el navegador.
 
