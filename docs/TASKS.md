@@ -170,8 +170,8 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Fase 7 — Órdenes**
 - [x] T7.1 — `POST /orders`: órdenes MARKET por cantidad
-- [ ] T7.2 — Órdenes LIMIT
-- [ ] T7.3 — Órdenes por monto en pesos
+- [x] T7.2 — Órdenes LIMIT
+- [x] T7.3 — Órdenes por monto en pesos
 - [ ] T7.4 — Transferencias CASH_IN / CASH_OUT
 - [ ] T7.5 — Control de concurrencia
 - [ ] T7.6 — Cancelación de órdenes
@@ -597,42 +597,41 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** aceptar órdenes LIMIT, que quedan en espera y reservan efectivo o acciones.
 
 **Subtareas**
-- [ ] `price` obligatorio en LIMIT: número > 0 con hasta 2 decimales. Si falta o es inválido → 400.
-- [ ] Guardar con `price` igual al precio límite y `status` `NEW`, aunque el precio de mercado sea mejor.
-- [ ] Validar al enviarla: BUY con `size × precio límite` ≤ `availableCash`, SELL con `size` ≤ acciones disponibles. Si no alcanza → `REJECTED`.
-- [ ] Instrumento sin datos de mercado → `REJECTED` con `NO_MARKET_DATA` y `price` igual al precio límite.
-- [ ] Confirmar que una BUY `NEW` suma a `reservedCash` y una SELL `NEW` descuenta acciones disponibles.
+- [x] `price` obligatorio en LIMIT: número > 0 con hasta 2 decimales. Si falta o es inválido → 400.
+- [x] Guardar con `price` igual al precio límite y `status` `NEW`, aunque el precio de mercado sea mejor.
+- [x] Validar al enviarla: BUY con `size × precio límite` ≤ `availableCash`, SELL con `size` ≤ acciones disponibles. Si no alcanza → `REJECTED`.
+- [x] Instrumento sin datos de mercado → `REJECTED` con `NO_MARKET_DATA` y `price` igual al precio límite.
+- [x] Confirmar que una BUY `NEW` suma a `reservedCash` y una SELL `NEW` descuenta acciones disponibles.
 
 **Criterios de aceptación**
-- [ ] Usuario 1, LIMIT BUY 10 PAMP a 900 → `NEW` con `price` 900. `reservedCash` sube `9000` y `availableCash` baja `9000`.
-- [ ] LIMIT BUY 10 PAMP a 1000 (por encima del mercado) → `NEW`, no se ejecuta.
-- [ ] LIMIT BUY 3000 METR a 229.50 → `REJECTED` con `INSUFFICIENT_FUNDS`.
-- [ ] Dos LIMIT BUY de 2000 METR a 229.50 seguidas → la primera `NEW` y la segunda `REJECTED` (la reserva de la primera deja `168500` disponibles).
-- [ ] LIMIT SELL 40 PAMP a 1000 → `NEW`. Después, MARKET SELL 1 PAMP → `REJECTED` con `INSUFFICIENT_SHARES`.
-- [ ] LIMIT BUY 1 PGR a 100 → `REJECTED` con `NO_MARKET_DATA` y `price` 100.
-- [ ] LIMIT sin `price`, o con `price` 0, negativo o con 3 decimales → 400.
+- [x] Usuario 1, LIMIT BUY 10 PAMP a 900 → `NEW` con `price` 900. `reservedCash` sube `9000` y `availableCash` baja `9000`. 
+- [x] LIMIT BUY 10 PAMP a 1000 (por encima del mercado) → `NEW`, no se ejecuta.
+- [x] LIMIT BUY 3000 METR a 229.50 → `REJECTED` con `INSUFFICIENT_FUNDS`.
+- [x] Dos LIMIT BUY de 2000 METR a 229.50 seguidas → la primera `NEW` y la segunda `REJECTED` (la reserva de la primera deja `168500` disponibles).
+- [x] LIMIT SELL 40 PAMP a 1000 → `NEW`. Después, MARKET SELL 1 PAMP → `REJECTED` con `INSUFFICIENT_SHARES`.
+- [x] LIMIT BUY 1 PGR a 100 → `REJECTED` con `NO_MARKET_DATA` y `price` 100.
+- [x] LIMIT sin `price`, o con `price` 0, negativo o con 3 decimales → 400.
 
 ### T7.3 — Órdenes por monto en pesos
 
 **Objetivo:** permitir indicar un monto en pesos en lugar de una cantidad de acciones.
 
 **Subtareas**
-- [ ] Agregar el campo `amount`: número > 0 con hasta 2 decimales, para BUY y SELL.
-- [ ] BUY/SELL deben traer exactamente uno de `size` o `amount`. Si no trae ninguno, o trae ambos → 400.
-- [ ] Calcular `size = floor(amount ÷ precio)`, con el último `close` en MARKET y el precio límite en LIMIT.
-- [ ] Si el `size` calculado es 0 → `REJECTED` con `AMOUNT_TOO_LOW` y `size` `0`.
-- [ ] MARKET por monto sobre un instrumento sin datos de mercado → `REJECTED` con `NO_MARKET_DATA`, `size` `0` y `price` `0`.
-- [ ] Respetar la prioridad de los códigos de rechazo.
+- [x] Agregar el campo `amount`: número > 0 con hasta 2 decimales, para BUY y SELL.
+- [x] BUY/SELL deben traer exactamente uno de `size` o `amount`. Si no trae ninguno, o trae ambos → 400.
+- [x] Calcular `size = floor(amount ÷ precio)`, con el último `close` en MARKET y el precio límite en LIMIT.
+- [x] Si el `size` calculado es 0 → `REJECTED` con `AMOUNT_TOO_LOW` y `size` `0`.
+- [x] MARKET por monto sobre un instrumento sin datos de mercado → `REJECTED` con `NO_MARKET_DATA`, `size` `0` y `price` `0`.
 
 **Criterios de aceptación**
-- [ ] MARKET BUY con `amount` 50000 de PAMP → `FILLED` con `size` 54 y `price` 925.85.
-- [ ] LIMIT BUY con `amount` 50000 de PAMP a 900 → `NEW` con `size` 55.
-- [ ] Usuario 1, MARKET SELL con `amount` 9000 de PAMP → `FILLED` con `size` 9.
-- [ ] Usuario 1, MARKET SELL con `amount` 50000 de PAMP (tiene 40) → `REJECTED` con `INSUFFICIENT_SHARES` y `size` 54.
-- [ ] MARKET BUY con `amount` 500 de PAMP → `REJECTED` con `AMOUNT_TOO_LOW` y `size` 0.
-- [ ] Usuario 2 (sin efectivo), BUY con `amount` 100 de PAMP → `AMOUNT_TOO_LOW`, no `INSUFFICIENT_FUNDS`.
-- [ ] MARKET BUY con `amount` 1000 de PGR → `NO_MARKET_DATA` con `size` 0 y `price` 0.
-- [ ] `size` y `amount` juntos, ninguno de los dos, o `amount` 0, negativo o con 3 decimales → 400.
+- [x] MARKET BUY con `amount` 50000 de PAMP → `FILLED` con `size` 54 y `price` 925.85.
+- [x] LIMIT BUY con `amount` 50000 de PAMP a 900 → `NEW` con `size` 55.
+- [x] Usuario 1, MARKET SELL con `amount` 9000 de PAMP → `FILLED` con `size` 9.
+- [x] Usuario 1, MARKET SELL con `amount` 50000 de PAMP (tiene 40) → `REJECTED` con `INSUFFICIENT_SHARES` y `size` 54.
+- [x] MARKET BUY con `amount` 500 de PAMP → `REJECTED` con `AMOUNT_TOO_LOW` y `size` 0.
+- [x] Usuario 2 (sin efectivo), BUY con `amount` 100 de PAMP → `AMOUNT_TOO_LOW`, no `INSUFFICIENT_FUNDS`.
+- [x] MARKET BUY con `amount` 1000 de PGR → `NO_MARKET_DATA` con `size` 0 y `price` 0.
+- [x] `size` y `amount` juntos, ninguno de los dos, o `amount` 0, negativo o con 3 decimales → 400.
 
 ### T7.4 — Transferencias CASH_IN / CASH_OUT
 

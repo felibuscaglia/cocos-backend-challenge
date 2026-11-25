@@ -22,7 +22,7 @@ export class OrdersService {
 
   async createOrder(
     user: User,
-    { ticker, side, type, size, price }: CreateOrderDto,
+    { ticker, side, type, size, amount, price }: CreateOrderDto,
   ): Promise<CreatedOrderDto> {
     const result = await this.instrumentsRepository.findByTicker(ticker);
 
@@ -46,6 +46,14 @@ export class OrdersService {
       : type === OrderType.MARKET
         ? (latestClose ?? '0')
         : price!;
+    // El DTO exige size o amount en BUY/SELL.
+    // Sin precio (MARKET sin datos de mercado) la cantidad no se puede calcular y queda en 0.
+    const orderSize =
+      isTrade && amount !== undefined
+        ? new Decimal(orderPrice).isZero()
+          ? 0
+          : new Decimal(amount).div(orderPrice).floor().toNumber()
+        : size!;
     let rejection: CreatedOrderDto['rejection'];
 
     if (isTrade && latestClose === null) {
@@ -53,10 +61,15 @@ export class OrdersService {
         code: 'NO_MARKET_DATA',
         message: REJECTION_MESSAGES.NO_MARKET_DATA,
       };
+    } else if (orderSize === 0) {
+      rejection = {
+        code: 'AMOUNT_TOO_LOW',
+        message: REJECTION_MESSAGES.AMOUNT_TOO_LOW,
+      };
     } else if (side === OrderSide.BUY || side === OrderSide.CASH_OUT) {
       const { availableCash } = await this.calculateCashBalances(user.id);
 
-      if (new Decimal(size).times(orderPrice).gt(availableCash)) {
+      if (new Decimal(orderSize).times(orderPrice).gt(availableCash)) {
         rejection = {
           code: 'INSUFFICIENT_FUNDS',
           message: REJECTION_MESSAGES.INSUFFICIENT_FUNDS,
@@ -68,7 +81,7 @@ export class OrdersService {
         instrument.id,
       );
 
-      if (size > availableShares) {
+      if (orderSize > availableShares) {
         rejection = {
           code: 'INSUFFICIENT_SHARES',
           message: REJECTION_MESSAGES.INSUFFICIENT_SHARES,
@@ -88,7 +101,7 @@ export class OrdersService {
       instrumentId: instrument.id,
       side,
       type,
-      size,
+      size: orderSize,
       price: orderPrice,
       status,
       datetime,
@@ -97,7 +110,7 @@ export class OrdersService {
     return {
       id: order.id,
       ticker: instrument.ticker,
-      size,
+      size: orderSize,
       price: orderPrice,
       type,
       side,

@@ -8,7 +8,11 @@ import {
   Min,
   ValidateIf,
 } from 'class-validator';
+import { ExactlyOneOf } from '../../common/decorators';
 import { OrderSide, OrderType } from '../enums';
+
+const isTrade = (dto: CreateOrderDto) =>
+  dto.side === OrderSide.BUY || dto.side === OrderSide.SELL;
 
 export class CreateOrderDto {
   @ApiProperty({ description: 'Ticker del instrumento.', example: 'PAMP' })
@@ -19,6 +23,10 @@ export class CreateOrderDto {
   @IsEnum(OrderSide, {
     message: `side debe ser uno de: ${Object.values(OrderSide).join(', ')}`,
   })
+  // Va en side porque size y amount se saltean con ValidateIf según el caso.
+  @ExactlyOneOf(['size', 'amount'], {
+    message: 'Se debe enviar size o amount, pero no ambos',
+  })
   side: OrderSide;
 
   @ApiProperty({ description: 'Tipo de orden.', enum: OrderType })
@@ -27,14 +35,29 @@ export class CreateOrderDto {
   })
   type: OrderType;
 
-  @ApiProperty({
-    description: 'Cantidad de acciones.',
+  @ApiPropertyOptional({
+    description:
+      'Cantidad de acciones. En BUY/SELL se envía size o amount, no ambos.',
     minimum: 1,
     example: 10,
   })
+  @ValidateIf((dto: CreateOrderDto) => !isTrade(dto) || dto.size !== undefined)
   @IsInt({ message: 'size debe ser un entero' })
   @Min(1, { message: 'size debe ser mayor a 0' })
-  size: number;
+  size?: number;
+
+  @ApiPropertyOptional({
+    description:
+      'Monto en pesos, como texto decimal. Se compran o venden floor(amount ÷ precio) acciones. En BUY/SELL se envía size o amount, no ambos.',
+    example: '50000',
+  })
+  @ValidateIf((dto: CreateOrderDto) => dto.amount !== undefined)
+  @IsString({ message: 'amount debe ser un texto' })
+  @Matches(/^(?=.*[1-9])\d+(\.\d{1,2})?$/, {
+    message:
+      'amount debe ser un número decimal mayor a 0, con hasta 2 decimales',
+  })
+  amount?: string;
 
   @ApiPropertyOptional({
     description:
