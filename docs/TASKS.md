@@ -169,7 +169,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T6.1 — Endpoint `GET /instruments`
 
 **Fase 7 — Órdenes**
-- [ ] T7.1 — `POST /orders`: órdenes MARKET por cantidad
+- [x] T7.1 — `POST /orders`: órdenes MARKET por cantidad
 - [ ] T7.2 — Órdenes LIMIT
 - [ ] T7.3 — Órdenes por monto en pesos
 - [ ] T7.4 — Transferencias CASH_IN / CASH_OUT
@@ -188,7 +188,6 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [ ] T9.2 — Colección de Postman (recordatorio)
 - [ ] T9.3 — Verificación contra Neon *(condicional)*
 - [ ] T9.4 — Revisión final de la entrega
-- [ ] T9.5 — Header `X-User-Id` en Swagger
 
 ---
 
@@ -569,31 +568,29 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** crear el endpoint de envío de órdenes con la ejecución inmediata de BUY y SELL MARKET.
 
 **Subtareas**
-- [ ] Crear `POST /orders`, que identifica al usuario con `X-User-Id` (T4.2).
-- [ ] Definir el DTO con `ticker` (texto), `side` (BUY, SELL, CASH_IN, CASH_OUT), `type` (MARKET, LIMIT), `size` (entero > 0) y `price` (en MARKET se ignora, sin validarlo). Todos los mensajes en español.
-- [ ] Hasta completar T7.2–T7.4, LIMIT, `amount` y CASH_IN/CASH_OUT pueden responder 400.
-- [ ] Buscar el instrumento por `ticker` exacto (distingue mayúsculas). Si no existe → 404 "Instrumento no encontrado".
-- [ ] BUY/SELL sobre un instrumento de tipo `MONEDA` → 400.
-- [ ] Usar como precio el último `close`.
-- [ ] Aplicar las reglas de negocio:
-  - [ ] Sin datos de mercado → `REJECTED` con `NO_MARKET_DATA` y `price` `0`.
-  - [ ] BUY con `size × close` > `availableCash` → `REJECTED` con `INSUFFICIENT_FUNDS`.
-  - [ ] SELL con `size` > acciones disponibles → `REJECTED` con `INSUFFICIENT_SHARES`.
-  - [ ] Si pasa todas las reglas → `FILLED`.
-- [ ] Guardar siempre la orden (`FILLED` o `REJECTED`), con `datetime` asignado por Postgres.
-- [ ] Crear el mapa código → mensaje en español para los rechazos.
-- [ ] Responder 201 con el formato de respuesta de referencia.
+- [x] Crear `POST /orders`, que identifica al usuario con `X-User-Id` (T4.2).
+- [x] Definir el DTO con `ticker` (texto), `side` (BUY, SELL, CASH_IN, CASH_OUT), `type` (MARKET, LIMIT), `size` (entero > 0) y `price` (en MARKET se ignora, sin validarlo). Todos los mensajes en español.
+- [x] Buscar el instrumento por `ticker` exacto (distingue mayúsculas). Si no existe → 404 "Instrumento no encontrado".
+- [x] BUY/SELL sobre un instrumento de tipo `MONEDA` → 400.
+- [x] Usar como precio el último `close`.
+- [x] Aplicar las reglas de negocio:
+  - [x] Sin datos de mercado → `REJECTED` con `NO_MARKET_DATA` y `price` `0`.
+  - [x] BUY con `size × close` > `availableCash` → `REJECTED` con `INSUFFICIENT_FUNDS`.
+  - [x] SELL con `size` > acciones disponibles → `REJECTED` con `INSUFFICIENT_SHARES`.
+  - [x] Si pasa todas las reglas → `FILLED`.
+- [x] Crear el mapa código → mensaje en español para los rechazos.
+- [x] Responder 201 con el formato de respuesta de referencia.
 - [ ] Documentar en Swagger con ejemplos `FILLED` y `REJECTED`.
 
 **Criterios de aceptación**
-- [ ] Usuario 1, MARKET BUY 10 PAMP → 201 `FILLED` con `price` `925.85`. En una base recién creada, la nueva fila tiene id 12.
-- [ ] Usuario 1, MARKET SELL 10 PAMP → `FILLED`.
-- [ ] Usuario 1, MARKET BUY 3000 METR (`688500`, más que los `627500` disponibles aunque menos que los `753000` totales) → `REJECTED` con `INSUFFICIENT_FUNDS`. La fila queda guardada con `size` 3000 y `price` 229.5.
-- [ ] Usuario 1, MARKET SELL 41 PAMP → `REJECTED` con `INSUFFICIENT_SHARES`.
-- [ ] MARKET BUY 1 PGR → `REJECTED` con `NO_MARKET_DATA` y `price` `0`.
-- [ ] `ticker: "pamp"` → 404. BUY con `ticker: "ARS"` → 400.
+- [x] Usuario 1, MARKET BUY 10 PAMP → 201 `FILLED` con `price` `925.85`. En una base recién creada, la nueva fila tiene id 12.
+- [x] Usuario 1, MARKET SELL 10 PAMP → `FILLED`.
+- [x] Usuario 1, MARKET BUY 3000 METR (`688500`, más que los `627500` disponibles aunque menos que los `753000` totales) → `REJECTED` con `INSUFFICIENT_FUNDS`. La fila queda guardada con `size` 3000 y `price` 229.5.
+- [x] Usuario 1, MARKET SELL 41 PAMP → `REJECTED` con `INSUFFICIENT_SHARES`.
+- [x] MARKET BUY 1 PGR → `REJECTED` con `NO_MARKET_DATA` y `price` `0`.
+- [x] `ticker: "pamp"` → 404. BUY con `ticker: "ARS"` → 400.
 - [ ] La respuesta no incluye `userId` ni `instrumentId`. `rejection` es `null` salvo en `REJECTED`.
-- [ ] Después de una orden `FILLED`, el portfolio la refleja.
+- [x] Después de una orden `FILLED`, el portfolio la refleja.
 
 ### T7.2 — Órdenes LIMIT
 
@@ -879,15 +876,3 @@ En cada caso se verifican el código HTTP, el formato del error (`statusCode`, `
 **Criterios de aceptación**
 - [ ] Todo lo anterior pasa sin intervención manual fuera del README.
 - [ ] Ninguna credencial real aparece en el repo ni en su historial.
-
-### T9.5 — Header `X-User-Id` en Swagger
-
-**Objetivo:** retomar el ítem pospuesto de T0.5: declarar el header `X-User-Id` en Swagger una sola vez, para reutilizarlo en los endpoints que lo necesitan.
-
-**Subtareas**
-- [ ] Definir cómo se declara el header de forma reutilizable.
-- [ ] Aplicarlo a `GET /portfolio` y `POST /orders`.
-
-**Criterios de aceptación**
-- [ ] En la UI de Swagger, `GET /portfolio` y `POST /orders` piden el header `X-User-Id`, con descripción en español.
-- [ ] `GET /instruments` y `POST /orders/:orderId/cancel` no lo piden.

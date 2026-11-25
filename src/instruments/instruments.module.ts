@@ -9,5 +9,6 @@ import { InstrumentsService } from './instruments.service';
   imports: [TypeOrmModule.forFeature([Instrument])],
   controllers: [InstrumentsController],
   providers: [InstrumentsRepository, InstrumentsService],
+  exports: [InstrumentsRepository],
 })
 export class InstrumentsModule {}

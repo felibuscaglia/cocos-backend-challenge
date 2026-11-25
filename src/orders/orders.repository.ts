@@ -11,6 +11,10 @@ export class OrdersRepository {
     @InjectRepository(Order) private readonly repository: Repository<Order>,
   ) {}
 
+  save(order: Partial<Order>): Promise<Order> {
+    return this.repository.save(order);
+  }
+
   // Devuelve un string porque Postgres entrega NUMERIC como texto y así no se pierde precisión.
   async sumOrderTotals(
     userId: number,

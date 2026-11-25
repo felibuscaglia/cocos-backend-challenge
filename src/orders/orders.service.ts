@@ -1,12 +1,111 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import Decimal from 'decimal.js';
-import { OrderSide, OrderStatus } from './enums';
+import { InstrumentType } from '../instruments/enums';
+import { InstrumentsRepository } from '../instruments/instruments.repository';
+import { User } from '../users/user.entity';
+import { CreatedOrderDto, CreateOrderDto } from './dto';
+import { OrderSide, OrderStatus, OrderType } from './enums';
 import { CashSummary, Position } from './interfaces';
+import { REJECTION_MESSAGES } from './lib/constants';
 import { OrdersRepository } from './orders.repository';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly ordersRepository: OrdersRepository) {}
+  constructor(
+    private readonly ordersRepository: OrdersRepository,
+    private readonly instrumentsRepository: InstrumentsRepository,
+  ) {}
+
+  async createOrder(
+    user: User,
+    { ticker, side, type, size, price }: CreateOrderDto,
+  ): Promise<CreatedOrderDto> {
+    const result = await this.instrumentsRepository.findByTicker(ticker);
+
+    if (!result) {
+      throw new NotFoundException('Instrumento no encontrado');
+    }
+
+    const { instrument, latestClose } = result;
+    const isTrade = side === OrderSide.BUY || side === OrderSide.SELL;
+
+    if (isTrade && instrument.type !== InstrumentType.ACCIONES) {
+      throw new BadRequestException(
+        'Solo se pueden comprar o vender instrumentos de tipo ACCIONES',
+      );
+    }
+
+    // Las transferencias van a precio 1 porque el efectivo se calcula como size × price.
+    // El DTO exige price en LIMIT.
+    const orderPrice = !isTrade
+      ? '1'
+      : type === OrderType.MARKET
+        ? (latestClose ?? '0')
+        : price!;
+    let rejection: CreatedOrderDto['rejection'];
+
+    if (isTrade && latestClose === null) {
+      rejection = {
+        code: 'NO_MARKET_DATA',
+        message: REJECTION_MESSAGES.NO_MARKET_DATA,
+      };
+    } else if (side === OrderSide.BUY || side === OrderSide.CASH_OUT) {
+      const { availableCash } = await this.calculateCashBalances(user.id);
+
+      if (new Decimal(size).times(orderPrice).gt(availableCash)) {
+        rejection = {
+          code: 'INSUFFICIENT_FUNDS',
+          message: REJECTION_MESSAGES.INSUFFICIENT_FUNDS,
+        };
+      }
+    } else if (side === OrderSide.SELL) {
+      const availableShares = await this.calculateAvailableShares(
+        user.id,
+        instrument.id,
+      );
+
+      if (size > availableShares) {
+        rejection = {
+          code: 'INSUFFICIENT_SHARES',
+          message: REJECTION_MESSAGES.INSUFFICIENT_SHARES,
+        };
+      }
+    }
+
+    const status = rejection
+      ? OrderStatus.REJECTED
+      : isTrade && type === OrderType.LIMIT
+        ? OrderStatus.NEW
+        : OrderStatus.FILLED;
+
+    const datetime = new Date();
+    const order = await this.ordersRepository.save({
+      userId: user.id,
+      instrumentId: instrument.id,
+      side,
+      type,
+      size,
+      price: orderPrice,
+      status,
+      datetime,
+    });
+
+    return {
+      id: order.id,
+      ticker: instrument.ticker,
+      size,
+      price: orderPrice,
+      type,
+      side,
+      status,
+      datetime,
+      rejection,
+    };
+  }
 
   async calculateCashBalances(userId: number): Promise<CashSummary> {
     const [inflows, outflows, reserved] = await Promise.all([

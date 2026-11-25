@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { PaginatedResult } from '../common/interfaces';
 import { Instrument } from './instrument.entity';
+import { InstrumentWithLatestClose } from './interfaces';
 
 @Injectable()
 export class InstrumentsRepository {
@@ -21,6 +22,26 @@ export class InstrumentsRepository {
       take: limit,
     });
     return { items, totalCount };
+  }
+
+  async findByTicker(
+    ticker: string,
+  ): Promise<InstrumentWithLatestClose | null> {
+    const { entities, raw } = await this.repository
+      .createQueryBuilder('instrument')
+      .addSelect(
+        `(SELECT md.close
+          FROM marketdata md
+          WHERE md.instrumentid = instrument.id
+          ORDER BY md.date DESC
+          LIMIT 1)`,
+        'latest_close',
+      )
+      .where('instrument.ticker = :ticker', { ticker })
+      .getRawAndEntities<{ latest_close: string | null }>();
+
+    if (!entities[0]) return null;
+    return { instrument: entities[0], latestClose: raw[0].latest_close };
   }
 
   async search(
