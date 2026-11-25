@@ -6,6 +6,14 @@
 
 **Por qué:** tiene integración oficial con NestJS (`@nestjs/typeorm`), maneja migraciones versionadas y reversibles, y permite ejecutar SQL directo cuando hace falta (la función de posiciones y los cálculos con `NUMERIC`).
 
+## Repositorios para las consultas, servicios para la lógica de negocio
+
+**Decisión:** el acceso a datos se separa de la lógica de negocio. Cada entidad que se consulta tiene un repositorio propio (ej. `UsersRepository`) con métodos concretos (`findById`), que envuelve el `Repository` de TypeORM. Los servicios solo tienen lógica de negocio y usan los repositorios para leer y escribir.
+
+**Por qué:** cada consulta queda en un único lugar con un nombre que dice qué hace, y los servicios no dependen de cómo se arma la consulta.
+
+**Alternativas descartadas:** inyectar el `Repository` de TypeORM directamente en los servicios. Es menos código, pero mezcla las consultas con la lógica de negocio.
+
 ## `database.sql` como base y migraciones encima
 
 **Decisión:** el esquema y los datos de `database.sql` se mantienen tal cual, y cada cambio se hace con una migración de TypeORM. `synchronize` está desactivado: TypeORM nunca modifica el esquema por su cuenta.

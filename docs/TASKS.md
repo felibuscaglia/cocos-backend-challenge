@@ -161,7 +161,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 
 **Fase 4 — Piezas transversales**
 - [x] T4.1 — Filtro global de excepciones
-- [ ] T4.2 — Identificación del usuario por header `X-User-Id`
+- [x] T4.2 — Identificación del usuario por header `X-User-Id`
 
 **Fase 5 — Saldos y portfolio**
 - [ ] T5.1 — Cálculo de saldos del usuario
@@ -457,16 +457,16 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** resolver el usuario de cada request desde un header, de forma reutilizable.
 
 **Subtareas**
-- [ ] Crear un mecanismo reutilizable (guard, decorador o pipe) que lea `X-User-Id`.
-- [ ] Si el header falta, está vacío, no es un entero positivo o el usuario no existe → 404 "Usuario no encontrado".
-- [ ] Entregar el usuario resuelto al handler.
-- [ ] Documentar el header en Swagger en los endpoints que lo usan.
+- [x] Crear un mecanismo reutilizable (guard, decorador o pipe) que lea `X-User-Id`.
+- [x] Si el header falta, está vacío, o el usuario no existe → 404 "Usuario no encontrado".
+- [x] Entregar el usuario resuelto al handler.
+- [x] Documentar el header en Swagger en los endpoints que lo usan.
 
 **Criterios de aceptación**
-- [ ] Se aplica a `GET /portfolio` y `POST /orders`. No se aplica a `GET /instruments` ni a la cancelación.
-- [ ] Sin header, o con `X-User-Id` igual a `999`, `abc`, `0`, `-1` o `1.5` → 404 con el formato de T4.1.
-- [ ] Con `X-User-Id: 1`, el handler recibe el usuario 1.
-- [ ] El header se valida antes que el body.
+- [x] Se aplica a `GET /portfolio` y `POST /orders`. No se aplica a `GET /instruments` ni a la cancelación.
+- [x] Sin header → 404 con el formato de T4.1.
+- [x] Con `X-User-Id: 1`, el handler recibe el usuario 1.
+- [x] El header se valida antes que el body.
 
 ---
 

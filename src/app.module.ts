@@ -6,6 +6,8 @@ import Joi from 'joi';
 import { AppController } from './app.controller';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { typeOrmOptions } from './database/typeorm-options';
+import { OrdersModule } from './orders/orders.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -26,6 +28,8 @@ import { typeOrmOptions } from './database/typeorm-options';
         migrationsRun: config.getOrThrow<boolean>('RUN_MIGRATIONS'),
       }),
     }),
+    UsersModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [{ provide: APP_FILTER, useClass: AllExceptionsFilter }],
