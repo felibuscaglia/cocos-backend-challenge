@@ -27,7 +27,7 @@ Lista de tareas para completar el challenge de punta a punta. Cada tarea equival
 
 ### Fórmulas
 
-Salvo aclaración, se usan solo órdenes `FILLED`. Todo el cálculo se hace en Postgres con `NUMERIC`. En las órdenes de efectivo `price = 1`, así que `size × price = size`.
+Salvo aclaración, se usan solo órdenes `FILLED`. Las sumas se hacen en Postgres. Combinar valores con decimales (montos, rendimientos) se hace en el servicio con `decimal.js`, nunca con `number` de JavaScript; las cantidades enteras (acciones), con `number`. En las órdenes de efectivo `price = 1`, así que `size × price = size`.
 
 | Concepto | Cálculo |
 |---|---|
@@ -164,7 +164,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T4.2 — Identificación del usuario por header `X-User-Id`
 
 **Fase 5 — Saldos y portfolio**
-- [ ] T5.1 — Cálculo de saldos del usuario
+- [x] T5.1 — Cálculo de saldos del usuario
 - [ ] T5.2 — Endpoint `GET /portfolio`
 
 **Fase 6 — Búsqueda de activos**
@@ -477,16 +477,16 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** tener en un solo lugar el cálculo de efectivo y acciones disponibles, para usarlo desde el portfolio y desde las órdenes.
 
 **Subtareas**
-- [ ] Escribir consultas SQL que devuelvan, para un usuario, el efectivo total, `reservedCash` y `availableCash`, según las fórmulas de referencia.
-- [ ] Escribir una consulta que devuelva las acciones disponibles para vender de un usuario en un instrumento (cantidad − SELL `NEW`).
-- [ ] Hacer todo el cálculo con `NUMERIC` en Postgres.
-- [ ] Permitir que estas consultas corran dentro de una transacción en curso (la necesita T7.5).
+- [x] Escribir consultas SQL que devuelvan, para un usuario, el efectivo total, `reservedCash` y `availableCash`, según las fórmulas de referencia.
+- [x] Escribir una consulta que devuelva las acciones disponibles para vender de un usuario en un instrumento (cantidad − SELL `NEW`).
+- [x] Sumar en Postgres y combinar los resultados en el servicio: con `decimal.js` los valores con decimales y con `number` las cantidades enteras.
+- [x] Permitir que estas consultas corran dentro de una transacción en curso (la necesita T7.5).
 
 **Criterios de aceptación**
-- [ ] Usuario 1: efectivo total `753000`, `reservedCash` `125500`, `availableCash` `627500`.
-- [ ] Usuarios 2, 3 y 4: todos los saldos en `0`.
-- [ ] Usuario 1: `40` acciones disponibles de PAMP y `-10` de BMA.
-- [ ] Las órdenes `REJECTED` y `CANCELLED` no afectan ningún saldo.
+- [x] Usuario 1: efectivo total `753000`, `reservedCash` `125500`, `availableCash` `627500`.
+- [x] Usuarios 2, 3 y 4: todos los saldos en `0`.
+- [x] Usuario 1: `40` acciones disponibles de PAMP y `-10` de BMA.
+- [x] Las órdenes `REJECTED` y `CANCELLED` no afectan ningún saldo.
 
 ### T5.2 — Endpoint `GET /portfolio`
 

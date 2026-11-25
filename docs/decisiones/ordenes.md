@@ -127,3 +127,23 @@
 - Advisory lock por usuario: es menos conocido y menos legible, y detrás de un pooler de conexiones solo funciona su variante transaccional.
 - Transacciones SERIALIZABLE con reintentos: requieren lógica de reintento y pueden abortar transacciones que no chocaban de verdad.
 - No hacer nada: deja abierta la posibilidad de gastar dinero que no existe.
+
+## Transacciones con `typeorm-transactional`
+
+**Decisión:** las transacciones se manejan con `typeorm-transactional`. Un método marcado con `@Transactional()` abre una transacción, y todas las consultas de los repositorios que se ejecuten durante esa llamada la usan, sin pasarles el `EntityManager`. Fuera de un método así, cada consulta corre sola, como siempre.
+
+**Por qué:** los métodos de saldos (`calculateCashBalances`, `calculateAvailableShares`) se usan tanto desde el portfolio, sin transacción, como desde el envío de órdenes, dentro de la transacción del bloqueo. Con la librería, la misma firma sirve para los dos casos.
+
+**Alternativas descartadas:**
+- Pasar un `EntityManager` opcional a cada método: es explícito y sin dependencias, pero suma un parámetro a cada método y hay que acordarse de pasarlo en toda la cadena.
+
+## Consultas de saldos en paralelo con `Promise.all`
+
+**Decisión:** los métodos de saldos lanzan sus consultas en paralelo con `Promise.all`, también dentro de una transacción.
+
+**Por qué:** fuera de una transacción, las consultas usan conexiones distintas y corren en paralelo. Dentro de una transacción comparten una sola conexión, y `pg` las ejecuta una detrás de otra: el resultado es correcto.
+
+**Riesgo conocido:** en ese caso `pg` 8 muestra el aviso "Calling client.query() when the client is already executing a query is deprecated and will be removed in pg@9.0". Con `pg` 9 dejaría de funcionar. `package.json` fija `pg` en `^8`, así que no se actualiza solo. Antes de pasar a `pg` 9, hay que cambiar las consultas a `await` secuenciales.
+
+**Alternativas descartadas:**
+- `await` secuenciales: sin aviso y compatibles con cualquier versión, pero fuera de una transacción las consultas dejan de correr en paralelo.

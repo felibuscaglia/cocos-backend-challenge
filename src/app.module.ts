@@ -3,6 +3,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Joi from 'joi';
+import { DataSource } from 'typeorm';
+import { addTransactionalDataSource } from 'typeorm-transactional';
 import { AppController } from './app.controller';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { typeOrmOptions } from './database/typeorm-options';
@@ -27,6 +29,8 @@ import { UsersModule } from './users/users.module';
         ...typeOrmOptions(config),
         migrationsRun: config.getOrThrow<boolean>('RUN_MIGRATIONS'),
       }),
+      dataSourceFactory: (options) =>
+        Promise.resolve(addTransactionalDataSource(new DataSource(options!))),
     }),
     UsersModule,
     OrdersModule,

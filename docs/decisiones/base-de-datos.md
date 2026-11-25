@@ -80,13 +80,18 @@
 
 **Por qué:** permite que la búsqueda ignore acentos ("compania" encuentra "Compañía", "rio" encuentra "Río"). Está disponible en la imagen oficial de Postgres y en la base hosteada.
 
-## Cálculos con `NUMERIC` en Postgres
+## Cálculos con `NUMERIC` en Postgres y `decimal.js` en el servicio
 
-**Decisión:** los montos, saldos y rendimientos se calculan en Postgres con `NUMERIC`.
+**Decisión:** las sumas sobre las filas se hacen en Postgres, en consultas simples del repositorio. Combinar esos resultados en el servicio depende del tipo de valor:
+- **Valores con decimales** (montos, saldos en pesos, rendimientos): con `decimal.js`, nunca con `number` de JavaScript. Viajan entre capas como strings.
+- **Cantidades enteras** (acciones): con `number`, convirtiendo con `Number()` el string que devuelve Postgres para un `SUM` (`BIGINT`).
 
-**Por qué:** `NUMERIC` es exacto. Los números de JavaScript acumulan errores de redondeo en operaciones con decimales.
+**Por qué:** `NUMERIC` y `decimal.js` son exactos; los números de JavaScript acumulan errores de redondeo con decimales (`0.1 + 0.2 = 0.30000000000000004`). Con enteros, `number` es exacto hasta `Number.MAX_SAFE_INTEGER` (unos 9 mil billones), así que `decimal.js` no aporta nada. Las reglas de negocio (qué órdenes cuentan y con qué signo) quedan en el servicio, y no en SQL ni en funciones de la base.
 
-**Alternativas descartadas:** una librería decimal en TypeScript, o guardar centavos como enteros. Las dos agregan código para resolver algo que Postgres ya resuelve.
+**Alternativas descartadas:**
+- Hacer todo el cálculo en Postgres, en la consulta del repositorio o en una función SQL: es exacto sin dependencias, pero deja reglas de negocio en la base.
+- Restar montos con decimales con `number` en el servicio: posibles errores de redondeo.
+- Guardar centavos como enteros: cambia el esquema de `database.sql`.
 
 ## Fecha de las órdenes desde el reloj de Postgres
 
