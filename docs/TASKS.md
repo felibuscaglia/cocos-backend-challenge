@@ -154,7 +154,7 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 - [x] T2.2 — Entidades
 
 **Fase 3 — Migraciones de esquema**
-- [ ] T3.1 — Restricciones NOT NULL y CHECK
+- [x] T3.1 — Restricciones NOT NULL y CHECK
 - [ ] T3.2 — Unicidad e índices
 - [ ] T3.3 — Extensión `unaccent`
 - [ ] T3.4 — Función SQL de posiciones por usuario
@@ -357,19 +357,18 @@ En una orden rechazada, `rejection` vale `{ "code": "INSUFFICIENT_FUNDS", "messa
 **Objetivo:** que la base rechace datos incompletos o con valores no permitidos.
 
 **Subtareas**
-- [ ] NOT NULL en:
-  - [ ] `users`: `email`, `accountnumber`.
-  - [ ] `instruments`: `ticker`, `name`, `type`.
-  - [ ] `orders`: `instrumentid`, `userid`, `side`, `type`, `status`, `size`, `price`, `datetime`.
-  - [ ] `marketdata`: `instrumentid`, `date`, `close`, `previousclose`.
-- [ ] Dejar opcionales `marketdata.open`, `high` y `low`, porque DOME y POLL tienen esos valores vacíos en el seed.
-- [ ] CHECK con los valores permitidos en `orders.side`, `orders.type`, `orders.status` e `instruments.type`.
-- [ ] Escribir un `down` que revierta todo.
+- [x] NOT NULL en:
+  - [x] `users`: `email`, `accountnumber`.
+  - [x] `instruments`: `ticker`, `name`, `type`.
+  - [x] `orders`: `instrumentid`, `userid`, `side`, `type`, `status`, `size`, `price`, `datetime`.
+  - [x] `marketdata`: `instrumentid`, `date`, `close`, `previousclose`.
+- [x] CHECK con los valores permitidos en `orders.side`, `orders.type`, `orders.status` e `instruments.type`.
+- [x] Escribir un `down` que revierta todo.
 
 **Criterios de aceptación**
-- [ ] La migración corre sin errores sobre el seed.
-- [ ] Insertar una orden con `status = 'FILED'`, o sin `userid`, falla en la base.
-- [ ] `npm run migration:revert` deja el esquema como estaba.
+- [x] La migración corre sin errores sobre el seed.
+- [x] Insertar una orden con `status = 'FILED'`, o sin `userid`, falla en la base.
+- [x] `npm run migration:revert` deja el esquema como estaba.
 
 ### T3.2 — Unicidad e índices
 
